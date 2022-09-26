@@ -1,4 +1,4 @@
-class Prodcut {
+class Product {
   final String id;
   final String title;
   final String description;
@@ -6,7 +6,7 @@ class Prodcut {
   final String imageUrl;
   bool isFavorite;
 
-  Prodcut(
+  Product(
       {required this.id,
       required this.title,
       required this.description,
