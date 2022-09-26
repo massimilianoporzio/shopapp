@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shopapp/models/product.dart';
+import 'package:shopapp/widgets/product_item.dart';
 
 class ProductsOverviewScreen extends StatelessWidget {
   ProductsOverviewScreen({super.key});
@@ -50,8 +51,14 @@ class ProductsOverviewScreen extends StatelessWidget {
               crossAxisCount: 2,
               childAspectRatio: 3 / 2,
               crossAxisSpacing: 10,
-              mainAxisExtent: 10),
-          itemBuilder: (ctx, i) => Container()),
+              mainAxisSpacing: 10),
+          itemBuilder: (ctx, i) {
+            Product product = loadedProducts[i];
+            return ProductItem(
+                id: product.id,
+                title: product.title,
+                imageUrl: product.imageUrl);
+          }),
     );
   }
 }
