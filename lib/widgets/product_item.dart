@@ -1,6 +1,7 @@
 import 'package:ellipsis_overflow_text/ellipsis_overflow_text.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:shopapp/screens/product_detail_screen.dart';
 
 class ProductItem extends StatelessWidget {
   const ProductItem(
@@ -24,45 +25,51 @@ class ProductItem extends StatelessWidget {
         decoration: BoxDecoration(
             border: Border.all(color: Colors.black26),
             borderRadius: BorderRadius.circular(10)),
-        child: GridTile(
-          footer: ClipRRect(
-            borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(10),
-                bottomRight: Radius.circular(10)),
-            child: GridTileBar(
-              leading: IconButton(
-                // iconSize: 14,
-                icon: const Icon(Icons.favorite),
-                onPressed: () {},
-                color: Theme.of(context).colorScheme.secondary,
-              ),
-              trailing: IconButton(
-                // iconSize: 14,
-                icon: const Icon(Icons.shopping_cart),
-                onPressed: () {},
-                color: Theme.of(context).colorScheme.secondary,
-              ),
-              backgroundColor: Colors.black54,
-              title: Center(
-                child: EllipsisOverflowText(
-                  maxLines: 2,
-                  title,
-                  textAlign: TextAlign.center,
+        child: GestureDetector(
+          onTap: () {
+            Navigator.of(context).pushNamed(ProductDetailScreen.routeName,
+                arguments: id); //e passo argomenti
+          },
+          child: GridTile(
+            footer: ClipRRect(
+              borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(10),
+                  bottomRight: Radius.circular(10)),
+              child: GridTileBar(
+                leading: IconButton(
+                  // iconSize: 14,
+                  icon: const Icon(Icons.favorite),
+                  onPressed: () {},
+                  color: Theme.of(context).colorScheme.secondary,
                 ),
-              ),
-              subtitle: Center(
-                child: Text(
-                  formatCurrency.format(price),
-                  textAlign: TextAlign.center,
+                trailing: IconButton(
+                  // iconSize: 14,
+                  icon: const Icon(Icons.shopping_cart),
+                  onPressed: () {},
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
+                backgroundColor: Colors.black54,
+                title: Center(
+                  child: EllipsisOverflowText(
+                    maxLines: 2,
+                    title,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                subtitle: Center(
+                  child: Text(
+                    formatCurrency.format(price),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               ),
             ),
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: Image.network(
-              imageUrl,
-              fit: BoxFit.cover,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.network(
+                imageUrl,
+                fit: BoxFit.cover,
+              ),
             ),
           ),
         ),
