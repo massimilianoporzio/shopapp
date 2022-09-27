@@ -20,41 +20,51 @@ class ProductItem extends StatelessWidget {
     final formatCurrency = NumberFormat.simpleCurrency();
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
-      child: GridTile(
-        footer: Container(
-          height: 50,
-          child: GridTileBar(
-            leading: IconButton(
-              // iconSize: 14,
-              icon: const Icon(Icons.favorite),
-              onPressed: () {},
-              color: Theme.of(context).colorScheme.secondary,
-            ),
-            trailing: IconButton(
-              // iconSize: 14,
-              icon: const Icon(Icons.shopping_cart),
-              onPressed: () {},
-              color: Theme.of(context).colorScheme.secondary,
-            ),
-            backgroundColor: Colors.black54,
-            title: Center(
-              child: EllipsisOverflowText(
-                maxLines: 2,
-                title,
-                textAlign: TextAlign.center,
+      child: Container(
+        decoration: BoxDecoration(
+            border: Border.all(color: Colors.black26),
+            borderRadius: BorderRadius.circular(10)),
+        child: GridTile(
+          footer: ClipRRect(
+            borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(10),
+                bottomRight: Radius.circular(10)),
+            child: GridTileBar(
+              leading: IconButton(
+                // iconSize: 14,
+                icon: const Icon(Icons.favorite),
+                onPressed: () {},
+                color: Theme.of(context).colorScheme.secondary,
               ),
-            ),
-            subtitle: Center(
-              child: Text(
-                formatCurrency.format(price),
-                textAlign: TextAlign.center,
+              trailing: IconButton(
+                // iconSize: 14,
+                icon: const Icon(Icons.shopping_cart),
+                onPressed: () {},
+                color: Theme.of(context).colorScheme.secondary,
+              ),
+              backgroundColor: Colors.black54,
+              title: Center(
+                child: EllipsisOverflowText(
+                  maxLines: 2,
+                  title,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              subtitle: Center(
+                child: Text(
+                  formatCurrency.format(price),
+                  textAlign: TextAlign.center,
+                ),
               ),
             ),
           ),
-        ),
-        child: Image.network(
-          imageUrl,
-          fit: BoxFit.cover,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: Image.network(
+              imageUrl,
+              fit: BoxFit.cover,
+            ),
+          ),
         ),
       ),
     );
