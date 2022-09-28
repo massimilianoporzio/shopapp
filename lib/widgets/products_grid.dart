@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shopapp/widgets/product_item.dart';
 
-import '../models/product.dart';
+import '../providers/product.dart';
 import '../providers/products.dart';
 
 //costruisce la lista di prodotto e ASCOLTA Products (il Prpovider)
