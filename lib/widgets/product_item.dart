@@ -2,6 +2,7 @@ import 'package:ellipsis_overflow_text/ellipsis_overflow_text.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:shopapp/main.dart';
 import 'package:shopapp/screens/product_detail_screen.dart';
 
 import '../providers/product.dart';
@@ -13,9 +14,10 @@ class ProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final myCtx = context;
     final product = Provider.of<Product>(context,
         listen:
-            true); //*se non ascolto più se cambia il cambiamento lo vedrò la prossima volta che entro in questa pagina
+            false); //*se non ascolto più se cambia il cambiamento lo vedrò la prossima volta che entro in questa pagina
     final formatCurrency = NumberFormat.simpleCurrency();
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
@@ -34,16 +36,23 @@ class ProductItem extends StatelessWidget {
                   bottomLeft: Radius.circular(10),
                   bottomRight: Radius.circular(10)),
               child: GridTileBar(
-                leading: IconButton(
-                  // iconSize: 14,
-                  icon: Icon(product.isFavorite
-                      ? Icons.favorite
-                      : Icons
-                          .favorite_border), //need to listen a single product
-                  onPressed: () {
-                    product.toggleFavoriteStatus(); //!e di conseguenza rebuild!
-                  },
-                  color: Theme.of(context).colorScheme.secondary,
+                leading: Consumer<Product>(
+                  //* SOLO ICONBUTTON ASCOLTA!
+                  builder: (context, value, child) => IconButton(
+                    // iconSize: 14,
+                    icon: Icon(
+                      product.isFavorite
+                          ? Icons.favorite
+                          : Icons.favorite_border,
+                      //*devo passare il MIO conteext se no è uno definito PRIMA del TEMA
+                      color: Theme.of(myCtx).colorScheme.secondary,
+                    ), //need to listen a single product
+                    onPressed: () {
+                      product
+                          .toggleFavoriteStatus(); //!e di conseguenza rebuild!
+                    },
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
                 ),
                 trailing: IconButton(
                   // iconSize: 14,
