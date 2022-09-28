@@ -26,10 +26,8 @@ class ProductsGrid extends StatelessWidget {
           Product product = loadedProducts[i];
           // qui attacco il provider dello specifico product
 
-          return ChangeNotifierProvider(
-            create: (BuildContext context) {
-              return product;
-            },
+          return ChangeNotifierProvider.value(
+            value: product,
             child: ProductItem(),
           );
         });
