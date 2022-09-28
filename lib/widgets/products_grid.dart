@@ -24,11 +24,14 @@ class ProductsGrid extends StatelessWidget {
             mainAxisSpacing: 10),
         itemBuilder: (ctx, i) {
           Product product = loadedProducts[i];
-          return ProductItem(
-              id: product.id,
-              title: product.title,
-              price: product.price,
-              imageUrl: product.imageUrl);
+          // qui attacco il provider dello specifico product
+
+          return ChangeNotifierProvider(
+            create: (BuildContext context) {
+              return product;
+            },
+            child: ProductItem(),
+          );
         });
   }
 }

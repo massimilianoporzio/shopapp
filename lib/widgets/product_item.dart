@@ -1,23 +1,19 @@
 import 'package:ellipsis_overflow_text/ellipsis_overflow_text.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:shopapp/screens/product_detail_screen.dart';
 
-class ProductItem extends StatelessWidget {
-  const ProductItem(
-      {super.key,
-      required this.id,
-      required this.title,
-      required this.imageUrl,
-      required this.price});
+import '../providers/product.dart';
 
-  final String id;
-  final String title;
-  final String imageUrl;
-  final double price;
+class ProductItem extends StatelessWidget {
+  const ProductItem({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final product = Provider.of<Product>(context);
     final formatCurrency = NumberFormat.simpleCurrency();
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
@@ -28,7 +24,7 @@ class ProductItem extends StatelessWidget {
         child: GestureDetector(
           onTap: () {
             Navigator.of(context).pushNamed(ProductDetailScreen.routeName,
-                arguments: id); //e passo argomenti
+                arguments: product.id); //e passo argomenti
           },
           child: GridTile(
             footer: ClipRRect(
@@ -38,7 +34,8 @@ class ProductItem extends StatelessWidget {
               child: GridTileBar(
                 leading: IconButton(
                   // iconSize: 14,
-                  icon: const Icon(Icons.favorite),
+                  icon: const Icon(
+                      Icons.favorite), //need to listen a single product
                   onPressed: () {},
                   color: Theme.of(context).colorScheme.secondary,
                 ),
@@ -52,13 +49,13 @@ class ProductItem extends StatelessWidget {
                 title: Center(
                   child: EllipsisOverflowText(
                     maxLines: 2,
-                    title,
+                    product.title,
                     textAlign: TextAlign.center,
                   ),
                 ),
                 subtitle: Center(
                   child: Text(
-                    formatCurrency.format(price),
+                    formatCurrency.format(product.price),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -67,7 +64,7 @@ class ProductItem extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10),
               child: Image.network(
-                imageUrl,
+                product.imageUrl,
                 fit: BoxFit.cover,
               ),
             ),
