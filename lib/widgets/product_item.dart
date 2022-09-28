@@ -15,7 +15,7 @@ class ProductItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final product = Provider.of<Product>(context,
         listen:
-            true); //*non ascolto più se cambia il cambiamento lo vedrò la prossima volta che entro in questa pagina
+            true); //*se non ascolto più se cambia il cambiamento lo vedrò la prossima volta che entro in questa pagina
     final formatCurrency = NumberFormat.simpleCurrency();
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
