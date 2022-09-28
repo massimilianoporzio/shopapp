@@ -45,6 +45,10 @@ class Products with ChangeNotifier {
     ]; // è una copia di cosa contiene _items se no dò aaccesso a _items!
   }
 
+  Product findById(String productId) {
+    return _items.firstWhere((element) => element.id == productId);
+  }
+
   void addProduct() {
     // ....
     notifyListeners(); //chi ascolta questo provider sa che deve fare rebuild
