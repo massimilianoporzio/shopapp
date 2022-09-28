@@ -38,6 +38,7 @@ class ProductItem extends StatelessWidget {
               child: GridTileBar(
                 leading: Consumer<Product>(
                   //* SOLO ICONBUTTON ASCOLTA!
+                  //child è quello definito sotto e posso usarlo sapendo che NON CAMBIERA'
                   builder: (context, value, child) => IconButton(
                     // iconSize: 14,
                     icon: Icon(
@@ -53,6 +54,7 @@ class ProductItem extends StatelessWidget {
                     },
                     color: Theme.of(context).colorScheme.secondary,
                   ),
+                  child: const Text('NEVERE CHANGES!'),
                 ),
                 trailing: IconButton(
                   // iconSize: 14,
