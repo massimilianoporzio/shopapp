@@ -13,7 +13,9 @@ class ProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final product = Provider.of<Product>(context);
+    final product = Provider.of<Product>(context,
+        listen:
+            false); //*non ascolto più se cambia il cambiamento lo vedrò la prossima volta che entro in questa pagina
     final formatCurrency = NumberFormat.simpleCurrency();
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
@@ -34,9 +36,13 @@ class ProductItem extends StatelessWidget {
               child: GridTileBar(
                 leading: IconButton(
                   // iconSize: 14,
-                  icon: const Icon(
-                      Icons.favorite), //need to listen a single product
-                  onPressed: () {},
+                  icon: Icon(product.isFavorite
+                      ? Icons.favorite
+                      : Icons
+                          .favorite_border), //need to listen a single product
+                  onPressed: () {
+                    product.toggleFavoriteStatus(); //!e di conseguenza rebuild!
+                  },
                   color: Theme.of(context).colorScheme.secondary,
                 ),
                 trailing: IconButton(
