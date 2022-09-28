@@ -1,19 +1,19 @@
-//costruisce la lista di prodotto e ASCOLTA Products (il Prpovider)
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shopapp/widgets/product_item.dart';
 
 import '../models/product.dart';
+import '../providers/products.dart';
 
+//costruisce la lista di prodotto e ASCOLTA Products (il Prpovider)
 class ProductsGrid extends StatelessWidget {
-  const ProductsGrid({
-    Key? key,
-    required this.loadedProducts,
-  }) : super(key: key);
-
-  final List<Product> loadedProducts;
+  const ProductsGrid({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    //stabilisce connessione dietro le quinte con il provider instance
+    final productData = Provider.of<Products>(context);
+    final loadedProducts = productData.items;
     return GridView.builder(
         padding: const EdgeInsets.all(10),
         itemCount: loadedProducts.length,
