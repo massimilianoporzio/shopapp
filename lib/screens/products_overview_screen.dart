@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:shopapp/models/product.dart';
 import 'package:shopapp/widgets/product_item.dart';
 
+import '../widgets/products_grid.dart';
+
 class ProductsOverviewScreen extends StatelessWidget {
   ProductsOverviewScreen({super.key});
 
@@ -44,22 +46,7 @@ class ProductsOverviewScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('MyShop')),
-      body: GridView.builder(
-          padding: const EdgeInsets.all(10),
-          itemCount: loadedProducts.length,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 2.2 / 2,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10),
-          itemBuilder: (ctx, i) {
-            Product product = loadedProducts[i];
-            return ProductItem(
-                id: product.id,
-                title: product.title,
-                price: product.price,
-                imageUrl: product.imageUrl);
-          }),
+      body: ProductsGrid(loadedProducts: loadedProducts),
     );
   }
 }
