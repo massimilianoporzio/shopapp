@@ -16,10 +16,19 @@ class CartItem {
 
 class Cart with ChangeNotifier {
   final uuid = Uuid();
-  late Map<String, CartItem> _items; //* PRODUCT ID vs CartItem
+  Map<String, CartItem> _items = {}; //* PRODUCT ID vs CartItem
 
   Map<String, CartItem> get items {
     return {..._items};
+  }
+
+  int get itemsCount {
+    //il numero di PRODOTTI NEL CARRELLO
+    int total = 0;
+    for (var element in _items.entries) {
+      total += element.value.quantity;
+    }
+    return total;
   }
 
   void addItem(String productId, double price, String title) {

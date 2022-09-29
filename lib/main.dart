@@ -22,6 +22,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider.value(value: Cart())
       ],
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'MyShop',
         theme: ThemeData(
             scaffoldBackgroundColor: Colors.white,

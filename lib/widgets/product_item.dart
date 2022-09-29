@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:shopapp/main.dart';
 import 'package:shopapp/screens/product_detail_screen.dart';
 
+import '../providers/cart.dart';
 import '../providers/product.dart';
 import '../providers/products.dart';
 
@@ -16,6 +17,8 @@ class ProductItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final myCtx = context;
+    final cart = Provider.of<Cart>(context,
+        listen: false); //*non mi interessano i cambiamenti nel cart qui
     final product = Provider.of<Product>(context,
         listen:
             false); //*se non ascolto più se cambia il cambiamento lo vedrò la prossima volta che entro in questa pagina
@@ -64,7 +67,9 @@ class ProductItem extends StatelessWidget {
                 trailing: IconButton(
                   // iconSize: 14,
                   icon: const Icon(Icons.shopping_cart),
-                  onPressed: () {},
+                  onPressed: () {
+                    cart.addItem(product.id, product.price, product.title);
+                  },
                   color: Theme.of(context).colorScheme.secondary,
                 ),
                 backgroundColor: Colors.black54,
