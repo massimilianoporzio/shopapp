@@ -66,6 +66,7 @@ class ProductItem extends StatelessWidget {
                 ),
                 trailing: IconButton(
                   // iconSize: 14,
+                  tooltip: "add item to the cart",
                   icon: const Icon(Icons.shopping_cart),
                   onPressed: () {
                     cart.addItem(product.id, product.price, product.title);
