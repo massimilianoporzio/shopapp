@@ -6,6 +6,7 @@ import 'package:shopapp/main.dart';
 import 'package:shopapp/screens/product_detail_screen.dart';
 
 import '../providers/product.dart';
+import '../providers/products.dart';
 
 class ProductItem extends StatelessWidget {
   const ProductItem({
@@ -51,6 +52,10 @@ class ProductItem extends StatelessWidget {
                     onPressed: () {
                       product
                           .toggleFavoriteStatus(); //!e di conseguenza rebuild!
+                      //MA AGGIORNO ANCHE LA GRIGLIA
+                      Provider.of<Products>(context,
+                              listen: false) //NON MI SERVE ASCOLTARE
+                          .refreshProductsList();
                     },
                     color: Theme.of(context).colorScheme.secondary,
                   ),

@@ -40,9 +40,18 @@ class Products with ChangeNotifier {
   ]; //not final the entire _items can be assigned dynamically
 
   List<Product> get items {
-    return [
-      ..._items
-    ]; // è una copia di cosa contiene _items se no dò aaccesso a _items!
+    //*lo uso se voglio a livello globale ma di solito
+    // if (_showFavoritesOnly) {
+    //   return _items
+    //       .where((element) => element.isFavorite)
+    //       .toList(); //* è una nuova lista in automatico
+    // } else {
+    return [..._items];
+    // } // è una copia di cosa contiene _items se no dò aaccesso a _items!
+  }
+
+  List<Product> get favoritesItems {
+    return items.where((element) => element.isFavorite).toList();
   }
 
   Product findById(String productId) {
@@ -52,5 +61,21 @@ class Products with ChangeNotifier {
   void addProduct() {
     // ....
     notifyListeners(); //chi ascolta questo provider sa che deve fare rebuild
+  }
+  //*lo uso se voglio a livello globale ma di solito
+  // var _showFavoritesOnly = false;
+
+  // void showFavoritesOnly() {
+  //   _showFavoritesOnly = true;
+  //   notifyListeners();
+  // }
+
+  // void showAll() {
+  //   _showFavoritesOnly = false;
+  //   notifyListeners();
+  // }
+
+  void refreshProductsList() {
+    notifyListeners(); // rifa fare il rebuild
   }
 }
