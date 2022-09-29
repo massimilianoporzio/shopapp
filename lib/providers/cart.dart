@@ -39,5 +39,6 @@ class Cart with ChangeNotifier {
           (() => CartItem(
               id: uuid.v4(), title: title, price: price, quantity: 1)));
     }
+    notifyListeners();
   }
 }
