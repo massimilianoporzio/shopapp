@@ -31,6 +31,10 @@ class Cart with ChangeNotifier {
     return total;
   }
 
+  int get cartItemCount {
+    return _items.length;
+  }
+
   void addItem(String productId, double price, String title) {
     if (_items.containsKey(productId)) {
       //*ho già il prodotto in cart
@@ -49,5 +53,13 @@ class Cart with ChangeNotifier {
               id: uuid.v4(), title: title, price: price, quantity: 1)));
     }
     notifyListeners();
+  }
+
+  double get totalAmount {
+    double total = 0.0;
+    _items.forEach((key, cartItem) {
+      total += cartItem.price * cartItem.quantity;
+    });
+    return total;
   }
 }
