@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shopapp/providers/products.dart';
 
@@ -8,6 +9,7 @@ class ProductDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final formatCurrency = NumberFormat.simpleCurrency();
     final productId = ModalRoute.of(context)!.settings.arguments as String;
 
     //se PRODUCTS cambia NON rifaccio build
@@ -16,6 +18,41 @@ class ProductDetailScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(loadedProduct.title),
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.only(top: 10),
+              height: 0.5 * MediaQuery.of(context).size.height,
+              width: double.infinity,
+              child: Image.network(
+                loadedProduct.imageUrl,
+                fit: BoxFit.contain,
+              ),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Text(
+              formatCurrency.format(loadedProduct.price),
+              style: const TextStyle(color: Colors.grey, fontSize: 22),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              width: double.infinity,
+              child: Text(
+                loadedProduct.description,
+                // textAlign: TextAlign.justify,
+                style: TextStyle(fontSize: 24),
+                softWrap: true, //* nuova linea se descrizione lunga
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

@@ -8,7 +8,8 @@ class Products with ChangeNotifier {
     Product(
       id: 'p1',
       title: 'Red Shirt',
-      description: 'A red shirt - it is pretty red!',
+      description:
+          'A red shirt - it is pretty red!\nEa reprehenderit cupidatat aute pariatur tempor eu est veniam nisi in amet adipisicing qui. Nulla aute laborum eiusmod officia ea anim Lorem labore sint. Aliqua magna consequat magna laborum eu mollit nostrud et. Excepteur laborum nulla velit cillum do. Proident velit non nulla excepteur consectetur quis fugiat exercitation dolore amet velit cupidatat consequat id. Culpa ad occaecat consectetur quis aliquip qui sit.',
       price: 29.99,
       imageUrl:
           'https://cdn.pixabay.com/photo/2016/10/02/22/17/red-t-shirt-1710578_1280.jpg',
