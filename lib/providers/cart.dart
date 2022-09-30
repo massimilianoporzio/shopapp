@@ -35,6 +35,11 @@ class Cart with ChangeNotifier {
     return _items.length;
   }
 
+  void removeItem(String productId) {
+    _items.remove(productId);
+    notifyListeners();
+  }
+
   void decreaseQuantityOfItem(String productId, int actualQuantity) {
     if (actualQuantity <= 1) {
       _items.removeWhere((key, value) => key == productId);
