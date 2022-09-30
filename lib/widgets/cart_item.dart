@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/cart.dart';
 
 class CartItem extends StatelessWidget {
-  final String cartId;
+  final String productId;
   final double price;
   final int quantity;
   final String title;
 
   const CartItem(
       {super.key,
-      required this.cartId,
+      required this.productId,
       required this.price,
       required this.quantity,
       required this.title});
@@ -33,7 +36,32 @@ class CartItem extends StatelessWidget {
               ),
             ),
           ),
-          trailing: Text('$quantity x'),
+          trailing: Container(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                    onPressed: () {
+                      Provider.of<Cart>(context, listen: false)
+                          .decreaseQuantityOfItem(productId, quantity);
+                    },
+                    icon: const Icon(
+                      Icons.remove,
+                      color: Colors.black,
+                    )),
+                Text('$quantity x'),
+                IconButton(
+                    onPressed: () {
+                      Provider.of<Cart>(context, listen: false)
+                          .addItem(productId, price, title);
+                    },
+                    icon: const Icon(
+                      Icons.add,
+                      color: Colors.black,
+                    )),
+              ],
+            ),
+          ),
         ),
       ),
     );
