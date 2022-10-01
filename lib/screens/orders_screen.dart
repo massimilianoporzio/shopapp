@@ -15,11 +15,17 @@ class OrdersScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Your orders')),
       drawer: const AppDrawer(),
-      body: ListView.builder(
-        itemCount: orderData.orders.length,
-        itemBuilder: (context, index) =>
-            OrderItem(order: orderData.orders[index]),
-      ),
+      body: orderData.orders.isNotEmpty
+          ? ListView.builder(
+              itemCount: orderData.orders.length,
+              itemBuilder: (context, index) =>
+                  OrderItem(order: orderData.orders[index]),
+            )
+          : Center(
+              child: Text(
+              'You have no orders yet',
+              style: Theme.of(context).textTheme.headline6,
+            )),
     );
   }
 }
