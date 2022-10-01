@@ -80,6 +80,7 @@ class ProductItem extends StatelessWidget {
                           content: const Text(
                             'Added item to cart',
                             textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 22),
                           ),
                           duration: const Duration(seconds: 2),
                           action: SnackBarAction(
