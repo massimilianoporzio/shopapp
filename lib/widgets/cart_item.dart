@@ -21,6 +21,40 @@ class CartItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final formatCurrency = NumberFormat.simpleCurrency();
     return Dismissible(
+      confirmDismiss: (direction) {
+        return showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Icon(
+                Icons.warning,
+                color: Colors.red.shade600,
+              ),
+              content:
+                  const Text('Do you want to remove the item from the cart?'),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context)
+                          .pop(false); //* return false come future
+                    },
+                    child: Text('No',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.error,
+                        ))),
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(true);
+                    },
+                    child: Text('Yes',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.error,
+                        ))),
+              ],
+            );
+          },
+        );
+      },
       key: ValueKey(productId),
       direction: DismissDirection.endToStart,
       onDismissed: ((direction) {
