@@ -3,12 +3,14 @@ import 'package:uuid/uuid.dart';
 
 class CartItem {
   final String id;
+  final String productId;
   final String title;
   final int quantity;
   final double price;
 
   CartItem(
       {required this.id,
+      required this.productId,
       required this.title,
       required this.quantity,
       required this.price});
@@ -48,6 +50,7 @@ class Cart with ChangeNotifier {
           productId,
           (oldCartItem) => CartItem(
               id: oldCartItem.id,
+              productId: productId,
               title: oldCartItem.title,
               quantity: oldCartItem.quantity - 1,
               price: oldCartItem.price));
@@ -63,6 +66,7 @@ class Cart with ChangeNotifier {
           productId,
           (existingCartItem) => CartItem(
               id: existingCartItem.id,
+              productId: existingCartItem.productId,
               title: existingCartItem.title,
               quantity: existingCartItem.quantity + 1, // AUMENTO
               price: existingCartItem.price));
@@ -70,7 +74,11 @@ class Cart with ChangeNotifier {
       _items.putIfAbsent(
           productId,
           (() => CartItem(
-              id: uuid.v4(), title: title, price: price, quantity: 1)));
+              id: uuid.v4(),
+              productId: productId,
+              title: title,
+              price: price,
+              quantity: 1)));
     }
     notifyListeners();
   }
