@@ -15,7 +15,7 @@ class CartItem {
 }
 
 class Cart with ChangeNotifier {
-  final uuid = Uuid();
+  final uuid = const Uuid();
   Map<String, CartItem> _items = {}; //* PRODUCT ID vs CartItem
 
   Map<String, CartItem> get items {
@@ -72,6 +72,11 @@ class Cart with ChangeNotifier {
           (() => CartItem(
               id: uuid.v4(), title: title, price: price, quantity: 1)));
     }
+    notifyListeners();
+  }
+
+  void clearCart() {
+    _items = {};
     notifyListeners();
   }
 
