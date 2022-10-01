@@ -58,6 +58,28 @@ class Cart with ChangeNotifier {
     notifyListeners();
   }
 
+  void removeSingleItem(String productId) {
+    if (!_items.containsKey(productId)) {
+      //*NON CONTIENE ANCORA
+      return;
+    } else {
+      if (_items[productId]!.quantity > 1) {
+        _items.update(
+            productId,
+            (exsitingCartItem) => CartItem(
+                id: exsitingCartItem.id,
+                productId: exsitingCartItem.productId,
+                title: exsitingCartItem.title,
+                quantity: exsitingCartItem.quantity - 1,
+                price: exsitingCartItem.price));
+      } else {
+        //*SOLO 1: rimuovo tutto
+        _items.remove(productId);
+      }
+    }
+    notifyListeners();
+  }
+
   void addItem(String productId, double price, String title) {
     if (_items.containsKey(productId)) {
       //*ho già il prodotto in cart
