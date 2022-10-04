@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 
 import 'product.dart';
 
 class Products with ChangeNotifier {
+  final uuid = Uuid();
+
   //my STATE for products stuff
   final List<Product> _items = [
     Product(
@@ -59,9 +62,18 @@ class Products with ChangeNotifier {
     return _items.firstWhere((element) => element.id == productId);
   }
 
-  void addProduct() {
+  Product addProduct(Product product) {
     // ....
+
+    final newProduct = Product(
+        id: uuid.v4(),
+        title: product.title,
+        description: product.description,
+        price: product.price,
+        imageUrl: product.imageUrl);
+    _items.add(newProduct);
     notifyListeners(); //chi ascolta questo provider sa che deve fare rebuild
+    return newProduct;
   }
   //*lo uso se voglio a livello globale ma di solito
   // var _showFavoritesOnly = false;

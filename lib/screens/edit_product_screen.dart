@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shopapp/providers/product.dart';
+
+import '../providers/products.dart';
 
 //*GESTIONE LOCALE DELLO STATO FINCHè USER NON SUBMIT
 class EditProductsScreen extends StatefulWidget {
@@ -58,10 +61,14 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
     }
     //SUBMIT
     _form.currentState?.save();
-    print(_editedProduct.title);
-    print(_editedProduct.description);
-    print(_editedProduct.price.toString());
-    print(_editedProduct.imageUrl);
+    final insertedProduct = Provider.of<Products>(context, listen: false)
+        .addProduct(_editedProduct);
+    print(insertedProduct.id);
+    print(insertedProduct.title);
+    print(insertedProduct.description);
+    print(insertedProduct.price.toString());
+    print(insertedProduct.imageUrl);
+    Navigator.of(context).pop(); //TORNO INDIETRO DI UNA PAGINA
   }
 
   @override
