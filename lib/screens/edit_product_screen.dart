@@ -20,6 +20,16 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
   final _imageUrlController = TextEditingController();
   final _form = GlobalKey<FormState>(); //* interazione form-state
 
+  var _isInit = true; //inizialmente
+  var _isEdit = false;
+  //*mappa con valori iniziali (se ho 1 prodotto da editare)
+  var _initValues = {
+    'title': '',
+    'description': '',
+    'price': '',
+    'imageUrl': ''
+  };
+
   var _editedProduct =
       Product(id: '-1', title: '', description: '', price: 0.0, imageUrl: '');
 
@@ -45,6 +55,31 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
   }
 
   @override
+  void didChangeDependencies() {
+    //* run before render
+    if (_isInit) {
+      late final String productId;
+      final argument = ModalRoute.of(context)!.settings.arguments;
+      if (argument != null) {
+        _isEdit = true; //* ho già un id
+        productId = argument as String;
+        //CERCO IL PRODOTTO
+        _editedProduct =
+            Provider.of<Products>(context, listen: false).findById(productId);
+        _initValues = {
+          'title': _editedProduct.title,
+          'description': _editedProduct.description,
+          'price': _editedProduct.price.toString(),
+        };
+        _imageUrlController.text = _editedProduct.imageUrl;
+      }
+    }
+    _isInit = false; //prossima esecuzione non gira ll'if
+
+    super.didChangeDependencies();
+  }
+
+  @override
   void dispose() {
     _priceFocusNode.dispose();
     _descriptionFocusNode.dispose(); //*se no consuma memoria
@@ -61,13 +96,17 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
     }
     //SUBMIT
     _form.currentState?.save();
-    final insertedProduct = Provider.of<Products>(context, listen: false)
-        .addProduct(_editedProduct);
-    print(insertedProduct.id);
-    print(insertedProduct.title);
-    print(insertedProduct.description);
-    print(insertedProduct.price.toString());
-    print(insertedProduct.imageUrl);
+    //*is edit or add
+    if (_isEdit) {
+      //EDIT
+      final editedProduct = Provider.of<Products>(context, listen: false)
+          .editProduct(_editedProduct.id, _editedProduct);
+    } else {
+      print("ADDING");
+      final insertedProduct = Provider.of<Products>(context, listen: false)
+          .addProduct(_editedProduct);
+    }
+
     Navigator.of(context).pop(); //TORNO INDIETRO DI UNA PAGINA
   }
 
@@ -75,7 +114,7 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Edit Product'),
+          title: Text(_isEdit ? 'Edit Product' : 'Add a new Product'),
           actions: [
             IconButton(onPressed: _saveForm, icon: const Icon(Icons.save))
           ],
@@ -83,6 +122,7 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Form(
+            // autovalidateMode: AutovalidateMode.onUserInteraction,
             key: _form,
             child: SingleChildScrollView(
               child: Column(
@@ -90,11 +130,14 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
                   //*listView "perde" se fuori da schermo
                   //* anche un Container o SingleChildScrollable... con una Column va
                   TextFormField(
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    initialValue: _initValues['title'],
                     decoration: const InputDecoration(
                       labelText: 'Title',
                     ),
                     textInputAction: TextInputAction.next, //*move to next input
                     onFieldSubmitted: (value) {
+                      // _form.currentState?.validate();
                       FocusScope.of(context).requestFocus(_priceFocusNode);
                     }, //*passa al price
                     validator: (value) {
@@ -110,10 +153,13 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
                           title: newValue!,
                           description: _editedProduct.description,
                           price: _editedProduct.price,
-                          imageUrl: _editedProduct.imageUrl);
+                          imageUrl: _editedProduct.imageUrl,
+                          isFavorite: _editedProduct.isFavorite);
                     },
                   ),
                   TextFormField(
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    initialValue: _initValues['price'],
                     decoration: const InputDecoration(
                       labelText: 'Price',
                     ),
@@ -138,7 +184,8 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
                           title: _editedProduct.title,
                           description: _editedProduct.description,
                           price: double.parse(newValue!),
-                          imageUrl: _editedProduct.imageUrl);
+                          imageUrl: _editedProduct.imageUrl,
+                          isFavorite: _editedProduct.isFavorite);
                     },
                     onFieldSubmitted: (value) {
                       FocusScope.of(context)
@@ -147,6 +194,8 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
                     textInputAction: TextInputAction.next, //*move to next input
                   ),
                   TextFormField(
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    initialValue: _initValues['description'],
                     decoration: const InputDecoration(
                       labelText: 'Description',
                     ),
@@ -170,7 +219,8 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
                           title: _editedProduct.title,
                           description: newValue!,
                           price: _editedProduct.price,
-                          imageUrl: _editedProduct.imageUrl);
+                          imageUrl: _editedProduct.imageUrl,
+                          isFavorite: _editedProduct.isFavorite);
                     },
                   ),
                   Row(
@@ -196,12 +246,19 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
                       ),
                       Expanded(
                         child: TextFormField(
-                          decoration:
-                              const InputDecoration(labelText: 'Image URL'),
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          decoration: InputDecoration(
+                            labelText: 'Image URL',
+                            suffixIcon: IconButton(
+                              onPressed: _imageUrlController.clear,
+                              icon: const Icon(Icons.clear),
+                            ),
+                          ),
                           keyboardType: TextInputType.url,
                           textInputAction: TextInputAction.done,
                           controller: _imageUrlController,
                           focusNode: _imageUrlFocusNode,
+
                           onFieldSubmitted: (value) {
                             _saveForm(); //onFieldSub expect a String input (value)
                           },
@@ -227,7 +284,8 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
                                 title: _editedProduct.title,
                                 description: _editedProduct.description,
                                 price: _editedProduct.price,
-                                imageUrl: newValue!);
+                                imageUrl: newValue!,
+                                isFavorite: _editedProduct.isFavorite);
                           },
                           // onEditingComplete: () {
                           //   setState(

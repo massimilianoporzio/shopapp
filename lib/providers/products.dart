@@ -62,6 +62,18 @@ class Products with ChangeNotifier {
     return _items.firstWhere((element) => element.id == productId);
   }
 
+  Product? editProduct(String id, Product newProduct) {
+    final prodIndex = _items.indexWhere((element) => element.id == id);
+    if (prodIndex >= 0) {
+      _items[prodIndex] = newProduct;
+
+      notifyListeners();
+      return _items[prodIndex].copyWith();
+    } else {
+      return null;
+    }
+  }
+
   Product addProduct(Product product) {
     // ....
 
@@ -73,7 +85,7 @@ class Products with ChangeNotifier {
         imageUrl: product.imageUrl);
     _items.add(newProduct);
     notifyListeners(); //chi ascolta questo provider sa che deve fare rebuild
-    return newProduct;
+    return newProduct.copyWith();
   }
   //*lo uso se voglio a livello globale ma di solito
   // var _showFavoritesOnly = false;

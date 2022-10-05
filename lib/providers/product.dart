@@ -16,6 +16,14 @@ class Product with ChangeNotifier {
       required this.imageUrl,
       this.isFavorite = false});
 
+  Product copyWith() => Product(
+      id: id,
+      title: title,
+      description: description,
+      price: price,
+      imageUrl: imageUrl,
+      isFavorite: isFavorite);
+
   void toggleFavoriteStatus() {
     isFavorite = !isFavorite;
     notifyListeners(); //! chi ascolta chiamerà build
