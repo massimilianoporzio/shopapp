@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
+import 'package:http/http.dart' as http;
 
 import 'product.dart';
 
@@ -81,16 +84,43 @@ class Products with ChangeNotifier {
 
   Product addProduct(Product product) {
     // ....
+    //*send http request to backend
+    //*(take same time to finish) but app goes on
+    var newProduct = Product(
+        description: "",
+        id: "-2",
+        imageUrl: "",
+        price: 0,
+        title: "",
+        isFavorite: false);
+    final url = Uri.http(
+        "10.0.2.2:9000", "/database/shopapp-firebase-local/products.json");
+    //* products.json is firebase related and create if does not exisit a new collection
 
-    final newProduct = Product(
-        id: uuid.v4(),
-        title: product.title,
-        description: product.description,
-        price: product.price,
-        imageUrl: product.imageUrl);
-    _items.add(newProduct);
-    notifyListeners(); //chi ascolta questo provider sa che deve fare rebuild
-    return newProduct.copyWith();
+    //* POST request: (async-return a Future)
+    http
+        .post(url,
+            body: json.encode({
+              'title': product.title,
+              'description': product.description,
+              'imageUrl': product.imageUrl,
+              'price': product.price,
+              'isFavorite': product.isFavorite
+            }))
+        .then((response) {
+      //* eseguita DOPO che il server ha risposto
+      newProduct = Product(
+          id: json.decode(response.body)[
+              'name'], //*from firebase return the id as 'name' on body response
+          title: product.title,
+          description: product.description,
+          price: product.price,
+          imageUrl: product.imageUrl);
+      _items.add(newProduct);
+      notifyListeners(); //chi ascolta questo provider sa che deve fare rebuild
+    });
+    print(newProduct.copyWith().id);
+    return newProduct.copyWith(); //*alla peggio ritorna un prodotto vuoto
   }
   //*lo uso se voglio a livello globale ma di solito
   // var _showFavoritesOnly = false;

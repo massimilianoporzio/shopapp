@@ -46,3 +46,8 @@ app.*.map.json
 database.rules.json
 firebase.json
 storage.rules
+exported-dev-data/firebase-export-metadata.json
+exported-dev-data/auth_export/accounts.json
+exported-dev-data/auth_export/config.json
+exported-dev-data/database_export/10.json
+exported-dev-data/storage_export/buckets.json
