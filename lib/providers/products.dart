@@ -82,7 +82,7 @@ class Products with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addProduct(Product product) {
+  Future<Product> addProduct(Product product) async {
     // ....
     //*send http request to backend
     //*(take same time to finish) but app goes on
@@ -98,17 +98,20 @@ class Products with ChangeNotifier {
     //* products.json is firebase related and create if does not exisit a new collection
 
     //* POST request: (async-return a Future)
-    return http
-        .post(url,
-            body: json.encode({
-              'title': product.title,
-              'description': product.description,
-              'imageUrl': product.imageUrl,
-              'price': product.price,
-              'isFavorite': product.isFavorite
-            }))
-        .then((response) {
+    //*tolgo return se uso async
+
+    try {
+      //*codice che non hai garanzia funzioni senza errori (chiamo un server)
+      final response = await http.post(url,
+          body: json.encode({
+            'title': product.title,
+            'description': product.description,
+            'imageUrl': product.imageUrl,
+            'price': product.price,
+            'isFavorite': product.isFavorite
+          }));
       //* eseguita DOPO che il server ha risposto
+      //*con async hai le linee seguenti dentro una Future then
       newProduct = Product(
           id: json.decode(response.body)[
               'name'], //*from firebase return the id as 'name' on body response
@@ -118,10 +121,11 @@ class Products with ChangeNotifier {
           imageUrl: product.imageUrl);
       _items.add(newProduct);
       notifyListeners(); //chi ascolta questo provider sa che deve fare rebuild
-    }).catchError((error) {
+    } catch (error) {
       print(error);
-      throw error; //rilancio l'errore cosi nella pagina reagisco
-    });
+      rethrow; //rilancio l'errore cosi nella pagina reagisco
+    }
+    return newProduct;
   }
   //*lo uso se voglio a livello globale ma di solito
   // var _showFavoritesOnly = false;

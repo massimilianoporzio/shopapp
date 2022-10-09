@@ -93,7 +93,7 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
     super.dispose();
   }
 
-  void _saveForm() {
+  Future<void> _saveForm() async {
     final isValid = _form.currentState?.validate(); //* validazione
     if (!isValid!) {
       return; //non salvo
@@ -113,12 +113,12 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
       });
       Navigator.of(context).pop(); //*PER ORA TORNO SUBITO INDIETRO (no http)
     } else {
-      print("ADDING");
-      Provider.of<Products>(context, listen: false)
-          .addProduct(_editedProduct)
-          .catchError((error) {
-        //*error è rilanciato dal codice in products
-        return showDialog<Null>(
+      print("ADDING async");
+      try {
+        final added = await Provider.of<Products>(context, listen: false)
+            .addProduct(_editedProduct);
+      } catch (error) {
+        await showDialog<void>(
           context: context,
           builder: (context) => AlertDialog(
             title: const Text("An error occured!"),
@@ -136,13 +136,13 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
             ],
           ),
         );
-      }).then((value) {
-        //*eseguito dopo cil catchError
+      } finally {
+        //*eseguo comunque
         setState(() {
           _isLoading = false; //*FINITO!
         });
         Navigator.of(context).pop();
-      }); //TORNO INDIETRO DI UNA PAGINA //*SOLO QUANDO FINISCE LA CHIAMATA AL SERVER
+      }
     }
   }
 
