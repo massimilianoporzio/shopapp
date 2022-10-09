@@ -82,7 +82,7 @@ class Products with ChangeNotifier {
     notifyListeners();
   }
 
-  Product addProduct(Product product) {
+  Future<void> addProduct(Product product) {
     // ....
     //*send http request to backend
     //*(take same time to finish) but app goes on
@@ -98,7 +98,7 @@ class Products with ChangeNotifier {
     //* products.json is firebase related and create if does not exisit a new collection
 
     //* POST request: (async-return a Future)
-    http
+    return http
         .post(url,
             body: json.encode({
               'title': product.title,
@@ -118,9 +118,10 @@ class Products with ChangeNotifier {
           imageUrl: product.imageUrl);
       _items.add(newProduct);
       notifyListeners(); //chi ascolta questo provider sa che deve fare rebuild
+    }).catchError((error) {
+      print(error);
+      throw error; //rilancio l'errore cosi nella pagina reagisco
     });
-    print(newProduct.copyWith().id);
-    return newProduct.copyWith(); //*alla peggio ritorna un prodotto vuoto
   }
   //*lo uso se voglio a livello globale ma di solito
   // var _showFavoritesOnly = false;
