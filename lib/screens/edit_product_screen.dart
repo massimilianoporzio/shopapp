@@ -122,7 +122,7 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
           context: context,
           builder: (context) => AlertDialog(
             title: const Text("An error occured!"),
-            content: const Text("Something went wrong!"),
+            content: Text(error.toString()),
             actions: [
               TextButton(
                   onPressed: (() {
@@ -156,8 +156,10 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
           ],
         ),
         body: _isLoading
-            ? const Center(
-                child: CircularProgressIndicator(),
+            ? Center(
+                child: CircularProgressIndicator(
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
               )
             : Padding(
                 padding: const EdgeInsets.all(16.0),
