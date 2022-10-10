@@ -49,7 +49,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
       });
     }
     _isInit = false;
-    Provider.of<Products>(context).fetchAndSetProducts();
+    // Provider.of<Products>(context).fetchAndSetProducts();
     super.didChangeDependencies();
   }
 
