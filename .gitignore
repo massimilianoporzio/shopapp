@@ -52,3 +52,8 @@ exported-dev-data/auth_export/config.json
 exported-dev-data/database_export/10.json
 exported-dev-data/storage_export/buckets.json
 exported-dev-data/firestore_export/firestore_export.overall_export_metadata
+linux/flutter/generated_plugin_registrant.cc
+linux/flutter/generated_plugin_registrant.h
+linux/flutter/generated_plugins.cmake
+.gitignore
+.gitignore
