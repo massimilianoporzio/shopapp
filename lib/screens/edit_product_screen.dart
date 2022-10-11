@@ -120,30 +120,34 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
       }
     } catch (error) {
       //*cattura il rethrown da edit /add in Products
-      await showDialog<void>(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text("An error occured!"),
-          content: const Text("Something went wrong."),
-          actions: [
-            TextButton(
-                onPressed: (() {
-                  Navigator.of(context).pop(); //chiudo
-                }),
-                child: Text(
-                  'OK',
-                  style:
-                      TextStyle(color: Theme.of(context).colorScheme.secondary),
-                )),
-          ],
-        ),
-      );
+      await showErrorDialog();
     }
     setState(() {
       _isLoading = false; //*FINITO!
     });
     if (!mounted) return;
     Navigator.of(context).pop();
+  }
+
+  Future<void> showErrorDialog() async {
+    await showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("An error occured!"),
+        content: const Text("Something went wrong."),
+        actions: [
+          TextButton(
+              onPressed: (() {
+                Navigator.of(context).pop(); //chiudo
+              }),
+              child: Text(
+                'OK',
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.secondary),
+              )),
+        ],
+      ),
+    );
   }
 
   @override

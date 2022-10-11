@@ -12,7 +12,28 @@ class UserProductsScreen extends StatelessWidget {
 
   Future<void> _refreshProducts(BuildContext context) async {
     //non setto listner just refresh products
-    await Provider.of<Products>(context, listen: false).fetchAndSetProducts();
+    try {
+      await Provider.of<Products>(context, listen: false).fetchAndSetProducts();
+    } catch (e) {
+      await showDialog<void>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text("An error occured!"),
+          content: const Text("Something went wrong."),
+          actions: [
+            TextButton(
+                onPressed: (() {
+                  Navigator.of(context).pop(); //chiudo
+                }),
+                child: Text(
+                  'OK',
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.secondary),
+                )),
+          ],
+        ),
+      );
+    }
   }
 
   @override
