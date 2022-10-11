@@ -104,46 +104,46 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
       _isLoading = true; //*e rebuild widgets
     });
     //*is edit or add
-    if (_isEdit) {
-      //EDIT
-      Provider.of<Products>(context, listen: false)
-          .editProduct(_editedProduct.id, _editedProduct);
-      setState(() {
-        _isLoading = false; //FINITO
-      });
-      Navigator.of(context).pop(); //*PER ORA TORNO SUBITO INDIETRO (no http)
-    } else {
-      print("ADDING async");
-      try {
+    try {
+      if (_isEdit) {
+        print("EDITING async");
+        //EDIT
+        //se va in errore viene rilanciato e catturato dal catch seguente
+        await Provider.of<Products>(context, listen: false)
+            .editProduct(_editedProduct.id, _editedProduct);
+      } else {
+        print("ADDING async");
+        //se va in errore viene rilanciato e catturato dal catch seguente
+
         final added = await Provider.of<Products>(context, listen: false)
             .addProduct(_editedProduct);
-      } catch (error) {
-        await showDialog<void>(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text("An error occured!"),
-            content: Text(error.toString()),
-            actions: [
-              TextButton(
-                  onPressed: (() {
-                    Navigator.of(context).pop(); //chiudo
-                  }),
-                  child: Text(
-                    'OK',
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.secondary),
-                  )),
-            ],
-          ),
-        );
-      } finally {
-        //*eseguo comunque
-        setState(() {
-          _isLoading = false; //*FINITO!
-        });
-        Navigator.of(context).pop();
       }
+    } catch (error) {
+      //*cattura il rethrown da edit /add in Products
+      await showDialog<void>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text("An error occured!"),
+          content: const Text("Something went wrong."),
+          actions: [
+            TextButton(
+                onPressed: (() {
+                  Navigator.of(context).pop(); //chiudo
+                }),
+                child: Text(
+                  'OK',
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.secondary),
+                )),
+          ],
+        ),
+      );
     }
+    setState(() {
+      _isLoading = false; //*FINITO!
+    });
+    if (!mounted) return;
+    Navigator.of(context).pop();
   }
 
   @override

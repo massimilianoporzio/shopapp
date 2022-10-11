@@ -66,15 +66,32 @@ class Products with ChangeNotifier {
     return _items.firstWhere((element) => element.id == productId);
   }
 
-  Product? editProduct(String id, Product newProduct) {
+  Future<void> editProduct(String id, Product newProduct) async {
     final prodIndex = _items.indexWhere((element) => element.id == id);
     if (prodIndex >= 0) {
-      _items[prodIndex] = newProduct;
+      final queryParams = {
+        'ns': 'shopapp-firebase-local-default-rtdb',
+        "id": id
+      };
+      final host = Platform.isAndroid ? "10.0.2.2:9000" : "127.0.0.1:9000";
+      final url = Uri.http(host, "products.json", queryParams);
+      try {
+        await http.patch(url, body: {
+          "title": newProduct.title,
+          "description": newProduct.description,
+          "price": newProduct.price.toString(), //* va messo come String!
+          "imageUrl": newProduct.imageUrl
+        }); //update delle sole info acquisite dal form
+        _items[prodIndex] = newProduct;
+        notifyListeners();
+      } catch (e) {
+        print(e);
+        rethrow; //lo catturo dal widget
+      }
 
-      notifyListeners();
-      return _items[prodIndex].copyWith();
+      // return _items[prodIndex].copyWith();
     } else {
-      return null;
+      print('---');
     }
   }
 
@@ -95,7 +112,7 @@ class Products with ChangeNotifier {
         title: "",
         isFavorite: false);
     final queryParams = {'ns': 'shopapp-firebase-local-default-rtdb'};
-    final host = Platform.isAndroid ? "10.0.2.2:9000" : "localhost:9000";
+    final host = Platform.isAndroid ? "10.0.2.2:9000" : "127.0.0.1:9000";
     final url = Uri.http(host, "products.json", queryParams);
 
     //* products.json is firebase related and create if does not exisit a new collection
