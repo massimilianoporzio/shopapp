@@ -34,6 +34,7 @@ class UserProductsScreen extends StatelessWidget {
       ),
       drawer: const AppDrawer(),
       body: RefreshIndicator(
+        color: Theme.of(context).colorScheme.secondary,
         onRefresh: () {
           //*has to return a Future
           return _refreshProducts(context);

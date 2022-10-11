@@ -95,7 +95,8 @@ class Products with ChangeNotifier {
         title: "",
         isFavorite: false);
     final queryParams = {'ns': 'shopapp-firebase-local-default-rtdb'};
-    final url = Uri.http("10.0.2.2:9000", "products.json", queryParams);
+    final host = Platform.isAndroid ? "10.0.2.2:9000" : "localhost:9000";
+    final url = Uri.http(host, "products.json", queryParams);
 
     //* products.json is firebase related and create if does not exisit a new collection
 
@@ -150,7 +151,8 @@ class Products with ChangeNotifier {
   Future<void> fetchAndSetProducts() async {
     await Future.delayed(const Duration(seconds: 2));
     final queryParams = {'ns': 'shopapp-firebase-local-default-rtdb'};
-    final url = Uri.http("10.0.2.2:9000", "products.json", queryParams);
+    final host = Platform.isAndroid ? "10.0.2.2:9000" : "127.0.0.1:9000";
+    final url = Uri.http(host, "products.json", queryParams);
     try {
       final List<Product> loadedProducts = [];
       final response = await http.get(url);
