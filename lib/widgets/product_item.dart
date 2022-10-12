@@ -2,7 +2,6 @@ import 'package:ellipsis_overflow_text/ellipsis_overflow_text.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:shopapp/main.dart';
 import 'package:shopapp/screens/product_detail_screen.dart';
 
 import '../providers/cart.dart';
@@ -16,6 +15,7 @@ class ProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
     final myCtx = context;
     final cart = Provider.of<Cart>(context,
         listen: false); //*non mi interessano i cambiamenti nel cart qui
@@ -52,9 +52,15 @@ class ProductItem extends StatelessWidget {
                       //*devo passare il MIO conteext se no è uno definito PRIMA del TEMA
                       color: Theme.of(myCtx).colorScheme.secondary,
                     ), //need to listen a single product
-                    onPressed: () {
-                      product
-                          .toggleFavoriteStatus(); //!e di conseguenza rebuild!
+                    onPressed: () async {
+                      try {
+                        await product
+                            .toggleFavoriteStatus(); //!e di conseguenza rebuild!
+                      } catch (e) {
+                        scaffoldMessenger.showSnackBar(
+                            SnackBar(content: Text(e.toString())));
+                      }
+
                       //MA AGGIORNO ANCHE LA GRIGLIA
                       Provider.of<Products>(context,
                               listen: false) //NON MI SERVE ASCOLTARE

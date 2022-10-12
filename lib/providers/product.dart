@@ -1,4 +1,8 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class Product with ChangeNotifier {
   final String id;
@@ -24,8 +28,38 @@ class Product with ChangeNotifier {
       imageUrl: imageUrl,
       isFavorite: isFavorite);
 
-  void toggleFavoriteStatus() {
+  void _setFavValue(bool newValue) {
+    isFavorite = newValue;
+    notifyListeners();
+  }
+
+  Future<void> toggleFavoriteStatus() async {
+    //OPTIMISTIC! SALVO lo stato attuale , provo agg il backend
+    //*se va male rimetto lo stato attuale
+    final oldState = isFavorite;
+
+    final queryParams = {'ns': 'shopapp-firebase-local-default-rtdb'};
+    final host = Platform.isAndroid ? "10.0.2.2:9000" : "127.0.0.1:9000";
+    final url = Uri.http(host, "products/$id.json", queryParams);
+
     isFavorite = !isFavorite;
     notifyListeners(); //! chi ascolta chiamerà build
+    try {
+      final response = await http.patch(url,
+          body: json
+              .encode({"isFavorite": isFavorite})); //update di solo isFavorite
+      if (response.statusCode >= 400) {
+        //HTTP PACKAGE NON VA IN ERRORE PER PATCH e DELETE!!!!!REST CODE >=400
+        _setFavValue(oldState); //RIPORTO AL VALORE INIZIALE
+        throw const HttpException("Failed. Network issue.");
+      }
+    } catch (e) {
+      //HTTP PACKAGE NON VA IN ERRORE PER PATCH e DELETE!!!!!REST CODE >=400
+      print(e);
+      //ROLL BACK
+      _setFavValue(oldState);
+      throw const HttpException(
+          "Could not change Favorite state!"); //da catturare nel widget
+    }
   }
 }
