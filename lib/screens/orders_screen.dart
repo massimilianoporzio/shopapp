@@ -5,9 +5,52 @@ import 'package:shopapp/widgets/order_item.dart';
 import '../providers/orders.dart' show Orders;
 import '../widgets/app_drawer.dart'; //*import only Orders
 
-class OrdersScreen extends StatelessWidget {
+//*stateful perché ho bis di init o di didChangeDependencies
+class OrdersScreen extends StatefulWidget {
   static const routeName = '/orders';
   const OrdersScreen({super.key});
+
+  @override
+  State<OrdersScreen> createState() => _OrdersScreenState();
+}
+
+class _OrdersScreenState extends State<OrdersScreen> {
+  Future<void> showErrorDialog(BuildContext context) async {
+    await showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("An error occured!"),
+        content: const Text("Something went wrong."),
+        actions: [
+          TextButton(
+              onPressed: (() {
+                Navigator.of(context).pop(); //chiudo
+              }),
+              child: Text(
+                'OK',
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.secondary),
+              )),
+        ],
+      ),
+    );
+  }
+
+  @override
+  void initState() {
+    //* uso THEN perché NON voglio ritornare un Future
+    Future.delayed(Duration.zero).then(
+      (_) async {
+        try {
+          await Provider.of<Orders>(context, listen: false).fetchAndSetOrders();
+        } catch (e) {
+          print(e);
+          showErrorDialog(context);
+        }
+      },
+    ); //dura 0 ma ritorna Future
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
