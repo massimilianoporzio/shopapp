@@ -93,10 +93,10 @@ class Products with ChangeNotifier {
     }
   }
 
-  void deleteProduct(String id) {
+  Future<void> deleteProduct(String id) async {
     final queryParams = {'ns': 'shopapp-firebase-local-default-rtdb'};
     final host = Platform.isAndroid ? "10.0.2.2:9000" : "127.0.0.1:9000";
-    final url = Uri.http(host, "products/$id.jso", queryParams);
+    final url = Uri.http(host, "products/$id.json", queryParams);
     //*mi tengo l'indice dell'elemento che voglio cancellare
     final existingProductIndex =
         _items.indexWhere((element) => element.id == id);
@@ -104,27 +104,23 @@ class Products with ChangeNotifier {
     //*dart rimuove l'elemento dalla lista ma NON cancella l'elemento
     //*perché ho ancora qualcosa che punta a lui
     Product? existingProduct = _items[existingProductIndex];
-
+    _items.removeAt(existingProductIndex); //TOLGO DALLA LISTA LOCALE
     notifyListeners(); //aggiorno UI
     //*ora la lista local non ce l'ha più
 
-    //*senza await
-    http.delete(url).then((response) {
-      if (response.statusCode >= 400) {
-        //!qualcosa di storto
-        throw const HttpException('Could not delete product.');
-      }
-      print("OK IL DELETE");
-      //*ho avuto successo con l'API
-      //*metto a null il puntatore così libero memoria
+    final response = await http.delete(url);
 
-      existingProduct = null;
-    }).catchError((_) {
-      print("ERRORE!!!");
+    if (response.statusCode >= 400) {
+      //!qualcosa di storto
       //*LO RIMETTO IN LISTA LOCALE! perché NON SONO RIUSCIUTO A TOGLIERLO DAL DB
-      _items[existingProductIndex] = existingProduct!;
+      _items.insert(existingProductIndex, existingProduct);
       notifyListeners(); //e riaggiorno
-    });
+      throw const HttpException('Could not delete product.');
+    }
+
+    //*ho avuto successo con l'API
+    //*metto a null il puntatore così libero memoria
+    existingProduct = null;
   }
 
   Future<Product> addProduct(Product product) async {
@@ -193,7 +189,7 @@ class Products with ChangeNotifier {
 
   //*leggo da API e setto la lista dei prodotti
   Future<void> fetchAndSetProducts() async {
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 1));
     final queryParams = {'ns': 'shopapp-firebase-local-default-rtdb'};
     final host = Platform.isAndroid ? "10.0.2.2:9000" : "127.0.0.1:9000";
     final url = Uri.http(host, "products.json", queryParams);

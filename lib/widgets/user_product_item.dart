@@ -17,6 +17,9 @@ class UserProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //* lo definisco qui per usarlo nelle Future se no se lo creo dentro un async
+    //* non funziona
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
     return ListTile(
       title: Text(title),
       leading: CircleAvatar(
@@ -36,8 +39,17 @@ class UserProductItem extends StatelessWidget {
               color: Theme.of(context).colorScheme.primary),
           IconButton(
             icon: const Icon(Icons.delete),
-            onPressed: () {
-              Provider.of<Products>(context, listen: false).deleteProduct(id);
+            onPressed: () async {
+              try {
+                await Provider.of<Products>(context, listen: false)
+                    .deleteProduct(id);
+              } catch (error) {
+                scaffoldMessenger.showSnackBar(const SnackBar(
+                    content: Text(
+                  'Deleting failed!',
+                  style: TextStyle(fontSize: 18),
+                )));
+              }
             },
             color: Theme.of(context).colorScheme.error,
           ),
