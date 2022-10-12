@@ -1,9 +1,12 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+
+import '../providers/cart.dart' as cart;
+import '../providers/cart.dart';
 import '../providers/orders.dart';
 import '../widgets/cart_item.dart' as cartItemWidget;
-import '../providers/cart.dart' as cart;
 
 class CartScreen extends StatelessWidget {
   static const routeName = '/cart';
@@ -39,13 +42,9 @@ class CartScreen extends StatelessWidget {
                       ),
                       backgroundColor: Theme.of(context).colorScheme.primary,
                     ),
-                    TextButton(
-                        onPressed: () {
-                          Provider.of<Orders>(context, listen: false).addOrder(
-                              cart.items.values.toList(), cart.totalAmount);
-                          cart.clearCart(); //update!!! (rebuild)
-                        },
-                        child: const Text('ORDER NOW'))
+                    OrderButton(
+                      cart: cart,
+                    )
                   ]),
             ),
           ),
@@ -69,5 +68,76 @@ class CartScreen extends StatelessWidget {
         ]),
       ),
     );
+  }
+}
+
+class OrderButton extends StatefulWidget {
+  final Cart cart;
+
+  const OrderButton({
+    Key? key,
+    required this.cart,
+  }) : super(key: key);
+
+  @override
+  State<OrderButton> createState() => _OrderButtonState();
+}
+
+class _OrderButtonState extends State<OrderButton> {
+  var _isLoading = false;
+
+  Future<void> showErrorDialog(BuildContext context) async {
+    await showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("An error occured!"),
+        content: const Text("Something went wrong."),
+        actions: [
+          TextButton(
+              onPressed: (() {
+                Navigator.of(context).pop(); //chiudo
+              }),
+              child: Text(
+                'OK',
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.secondary),
+              )),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+        onPressed: (widget.cart.totalAmount <= 0 ||
+                _isLoading) //non ho prodotti nel carrello o sto caricando
+            //PUNTO A NULL COSI HO BOTTONE DISABILITATO!
+            ? null
+            : () async {
+                setState(() {
+                  _isLoading =
+                      true; //REBUILD SOLO IL TEXTBUTTON (unico stateful)
+                });
+                try {
+                  await Provider.of<Orders>(context, listen: false).addOrder(
+                      widget.cart.items.values.toList(),
+                      widget.cart.totalAmount);
+                  widget.cart.clearCart(); //update!!! (rebuild)
+
+                } catch (error) {
+                  showErrorDialog(context);
+                } finally {
+                  setState(() {
+                    _isLoading =
+                        false; //REBUILD SOLO IL TEXTBUTTON (unico stateful)
+                  });
+                }
+              },
+        child: _isLoading
+            ? CircularProgressIndicator(
+                color: Theme.of(context).colorScheme.secondary,
+              )
+            : const Text('ORDER NOW'));
   }
 }

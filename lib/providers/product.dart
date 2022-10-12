@@ -20,6 +20,15 @@ class Product with ChangeNotifier {
       required this.imageUrl,
       this.isFavorite = false});
 
+  Map toJson() => {
+        'id': id,
+        'title': title,
+        'description': description,
+        'price': price,
+        'imageUrl': imageUrl,
+        'isFavorite': isFavorite
+      };
+
   Product copyWith() => Product(
       id: id,
       title: title,
