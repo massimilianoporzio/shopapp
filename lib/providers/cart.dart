@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
+import 'package:json_annotation/json_annotation.dart';
 
+part "cart.g.dart";
+
+@JsonSerializable()
 class CartItem {
   final String id;
   final String productId;
@@ -15,12 +19,16 @@ class CartItem {
       required this.quantity,
       required this.price});
 
-  Map toJson() => {
-        'id': id,
-        'title': title,
-        'quantity': quantity,
-        'price': price,
-      };
+  factory CartItem.fromJson(Map<String, dynamic> json) =>
+      _$CartItemFromJson(json);
+  Map<String, dynamic> toJson() => _$CartItemToJson(this);
+
+  // Map toJson() => {
+  //       'id': id,
+  //       'title': title,
+  //       'quantity': quantity,
+  //       'price': price,
+  //     };
 }
 
 class Cart with ChangeNotifier {

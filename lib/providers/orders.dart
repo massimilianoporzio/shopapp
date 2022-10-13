@@ -2,29 +2,40 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import 'package:shopapp/providers/product.dart';
-import 'package:uuid/uuid.dart';
 import 'package:http/http.dart' as http;
+import 'package:json_annotation/json_annotation.dart';
+import 'package:uuid/uuid.dart';
+
+import 'package:shopapp/providers/product.dart';
+
 import 'cart.dart';
 
+part "orders.g.dart";
+
+@JsonSerializable(explicitToJson: true)
 class OrderItem {
-  String id;
+  @JsonKey(includeIfNull: false)
+  String? id;
   final double amount;
   final List<CartItem> products;
   final DateTime orderDate;
 
   OrderItem(
-      {this.id = "-1", //default
+      {this.id, //default
       required this.amount,
       required this.products,
       required this.orderDate});
 
-  Map toJson() => {
-        'id': id,
-        'amount': amount,
-        'products': products,
-        'dateTime': orderDate.toIso8601String(),
-      };
+  factory OrderItem.fromJson(Map<String, dynamic> json) =>
+      _$OrderItemFromJson(json);
+  Map<String, dynamic> toJson() => _$OrderItemToJson(this);
+
+  // Map toJson() => {
+  //       'id': id,
+  //       'amount': amount,
+  //       'products': products,
+  //       'dateTime': orderDate.toIso8601String(),
+  //     };
 }
 
 class Orders with ChangeNotifier {
@@ -40,10 +51,25 @@ class Orders with ChangeNotifier {
     final host = Platform.isAndroid ? "10.0.2.2:9000" : "127.0.0.1:9000";
     final url = Uri.http(host, "orders.json", queryParams);
     try {
-      final List<Product> loadedProducts = [];
+      final List<OrderItem> loadedOrders = [];
       final response = await http.get(url);
-      final extractedData = json.decode(response.body);
-      print(response.body);
+      // final extractedData = json.decode(response.body);
+      if (response.body != "null") {
+        Map<String, dynamic> ordersMap = jsonDecode(response.body);
+        ordersMap.forEach((orderId, orderData) {
+          orderData['id'] =
+              orderId; //gli assegno come id la chiave con cui arriva da firebase
+          final orderItem = OrderItem.fromJson(orderData);
+          loadedOrders.add(orderItem);
+        });
+        _orders = loadedOrders.reversed
+            .toList(); //IL PIU RECENTEMENTE INSERITO IN CIMA
+        notifyListeners();
+      } else {
+        _orders = [];
+        notifyListeners();
+        return; //non fa null'altro
+      }
     } catch (e) {
       rethrow; //GET VA IN ECCEZIONE
     }
@@ -59,7 +85,7 @@ class Orders with ChangeNotifier {
         amount: totalAmount, products: cartProducts, orderDate: timeStamp);
     await Future.delayed(const Duration(seconds: 1));
     try {
-      final response = await http.post(url, body: json.encode(newOrder));
+      final response = await http.post(url, body: jsonEncode(newOrder));
       //ASSOCIO L'ID GENERATO DA FIREBASE (DALLA API)
       newOrder.id = json.decode(response.body)[
           'name']; //*from firebase return the id as 'name' on body response

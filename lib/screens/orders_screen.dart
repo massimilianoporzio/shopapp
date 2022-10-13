@@ -15,6 +15,8 @@ class OrdersScreen extends StatefulWidget {
 }
 
 class _OrdersScreenState extends State<OrdersScreen> {
+  var _isLoading = false;
+
   Future<void> showErrorDialog(BuildContext context) async {
     await showDialog<void>(
       context: context,
@@ -38,12 +40,21 @@ class _OrdersScreenState extends State<OrdersScreen> {
 
   @override
   void initState() {
+    setState(() {
+      _isLoading = true;
+    });
     //* uso THEN perché NON voglio ritornare un Future
     Future.delayed(Duration.zero).then(
       (_) async {
         try {
           await Provider.of<Orders>(context, listen: false).fetchAndSetOrders();
+          setState(() {
+            _isLoading = false;
+          });
         } catch (e) {
+          setState(() {
+            _isLoading = false;
+          });
           print(e);
           showErrorDialog(context);
         }
@@ -58,17 +69,22 @@ class _OrdersScreenState extends State<OrdersScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text('Your orders')),
       drawer: const AppDrawer(),
-      body: orderData.orders.isNotEmpty
-          ? ListView.builder(
-              itemCount: orderData.orders.length,
-              itemBuilder: (context, index) =>
-                  OrderItem(order: orderData.orders[index]),
+      body: _isLoading
+          ? Center(
+              child: CircularProgressIndicator(
+                  color: Theme.of(context).colorScheme.secondary),
             )
-          : Center(
-              child: Text(
-              'You have no orders yet',
-              style: Theme.of(context).textTheme.headline6,
-            )),
+          : orderData.orders.isNotEmpty
+              ? ListView.builder(
+                  itemCount: orderData.orders.length,
+                  itemBuilder: (context, index) =>
+                      OrderItem(order: orderData.orders[index]),
+                )
+              : Center(
+                  child: Text(
+                  'You have no orders yet',
+                  style: Theme.of(context).textTheme.headline6,
+                )),
     );
   }
 }
