@@ -52,7 +52,7 @@ class Orders with ChangeNotifier {
   Future<void> addOrder(List<CartItem> cartProducts, double totalAmount) async {
     final queryParams = {'ns': 'shopapp-firebase-local-default-rtdb'};
     final host = Platform.isAndroid ? "10.0.2.2:9000" : "127.0.0.1:9000";
-    final url = Uri.http(host, "orders.json", queryParams);
+    final url = Uri.http(host, "orders.js", queryParams);
 
     final timeStamp = DateTime.now();
     final newOrder = OrderItem(
@@ -66,6 +66,7 @@ class Orders with ChangeNotifier {
       _orders.insert(0, newOrder);
       notifyListeners();
     } catch (e) {
+      _orders.removeAt(0); //TORNO INDIETRO
       print(e);
       rethrow; //DA GESTIRE NEL WIDGET
     }
