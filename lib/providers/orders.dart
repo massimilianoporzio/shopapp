@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:shopapp/providers/product.dart';
 import 'package:uuid/uuid.dart';
 import 'package:http/http.dart' as http;
 import 'cart.dart';
@@ -31,6 +32,21 @@ class Orders with ChangeNotifier {
 
   List<OrderItem> get orders {
     return [..._orders]; //* + una COPIA
+  }
+
+  Future<void> fetchAndSetOrders() async {
+    await Future.delayed(const Duration(seconds: 1));
+    final queryParams = {'ns': 'shopapp-firebase-local-default-rtdb'};
+    final host = Platform.isAndroid ? "10.0.2.2:9000" : "127.0.0.1:9000";
+    final url = Uri.http(host, "orders.js", queryParams);
+    try {
+      final List<Product> loadedProducts = [];
+      final response = await http.get(url);
+      final extractedData = json.decode(response.body) as Map<String,
+          dynamic>; //*map with other map as values and id as keys
+    } catch (e) {
+      rethrow; //GET VA IN ECCEZIONE
+    }
   }
 
   Future<void> addOrder(List<CartItem> cartProducts, double totalAmount) async {
