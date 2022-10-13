@@ -38,12 +38,12 @@ class Orders with ChangeNotifier {
     await Future.delayed(const Duration(seconds: 1));
     final queryParams = {'ns': 'shopapp-firebase-local-default-rtdb'};
     final host = Platform.isAndroid ? "10.0.2.2:9000" : "127.0.0.1:9000";
-    final url = Uri.http(host, "orders.js", queryParams);
+    final url = Uri.http(host, "orders.json", queryParams);
     try {
       final List<Product> loadedProducts = [];
       final response = await http.get(url);
-      final extractedData = json.decode(response.body) as Map<String,
-          dynamic>; //*map with other map as values and id as keys
+      final extractedData = json.decode(response.body);
+      print(response.body);
     } catch (e) {
       rethrow; //GET VA IN ECCEZIONE
     }
@@ -52,7 +52,7 @@ class Orders with ChangeNotifier {
   Future<void> addOrder(List<CartItem> cartProducts, double totalAmount) async {
     final queryParams = {'ns': 'shopapp-firebase-local-default-rtdb'};
     final host = Platform.isAndroid ? "10.0.2.2:9000" : "127.0.0.1:9000";
-    final url = Uri.http(host, "orders.js", queryParams);
+    final url = Uri.http(host, "orders.json", queryParams);
 
     final timeStamp = DateTime.now();
     final newOrder = OrderItem(
