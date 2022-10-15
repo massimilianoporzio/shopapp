@@ -34,6 +34,27 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
     super.initState();
   }
 
+  Future<void> showErrorDialog(BuildContext context) async {
+    await showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("An error occured!"),
+        content: const Text("Something went wrong."),
+        actions: [
+          TextButton(
+              onPressed: (() {
+                Navigator.of(context).pop(); //chiudo
+              }),
+              child: Text(
+                'OK',
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.secondary),
+              )),
+        ],
+      ),
+    );
+  }
+
   @override
   void didChangeDependencies() {
     //*run multiple items!!!! so..
@@ -41,12 +62,21 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
       setState(() {
         _isLoading = true;
       });
-
-      Provider.of<Products>(context).fetchAndSetProducts().then((_) {
-        setState(() {
-          _isLoading = false; //*SOLO THEN!
+      try {
+        Provider.of<Products>(context).fetchAndSetProducts().then((_) {
+          setState(() {
+            _isLoading = false; //*SOLO THEN!
+          });
+        }).onError((error, stackTrace) {
+          showErrorDialog(context);
+          setState(() {
+            _isLoading = false;
+          });
         });
-      });
+      } catch (e) {
+        showErrorDialog(context);
+        _isLoading = false;
+      }
     }
     _isInit = false;
     // Provider.of<Products>(context).fetchAndSetProducts();
