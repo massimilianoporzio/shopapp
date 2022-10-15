@@ -4,9 +4,6 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:json_annotation/json_annotation.dart';
-import 'package:uuid/uuid.dart';
-
-import 'package:shopapp/providers/product.dart';
 
 import 'cart.dart';
 
