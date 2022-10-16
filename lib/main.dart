@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shopapp/providers/auth.dart';
 import 'package:shopapp/providers/cart.dart';
 import 'package:shopapp/screens/auth_screen.dart';
 import 'package:shopapp/screens/cart_screen.dart';
@@ -28,6 +29,8 @@ class MyApp extends StatelessWidget {
         //* value mi aiuta con liste e wisget che vengono riusati (entrano / escono da schermo)
         //* NON SONO I PROVIDER A CAUSARE REBUILD MA I LISTENERS NEI VARI WIDGET
         // ChangeNotifierProvider.value(value: Products()),
+        ChangeNotifierProvider.value(value: Auth()),
+
         ChangeNotifierProvider.value(value: Cart()),
         // ChangeNotifierProvider.value(value: Orders()),
         ChangeNotifierProvider(
@@ -57,6 +60,8 @@ class MyApp extends StatelessWidget {
         home: const AuthScreen(), //!PRIMA CI SI AUTENTICA
         routes: {
           AuthScreen.routeName: (context) => const AuthScreen(),
+          ProductsOverviewScreen.routeName: (context) =>
+              const ProductsOverviewScreen(),
           ProductDetailScreen.routeName: (context) =>
               const ProductDetailScreen(), //deve ascoltare Products
           CartScreen.routeName: ((context) => const CartScreen()),
