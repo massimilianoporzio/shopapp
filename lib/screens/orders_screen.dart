@@ -6,12 +6,28 @@ import '../providers/orders.dart' show Orders;
 import '../widgets/app_drawer.dart'; //*import only Orders
 
 //*stateful perché ho bis di init o di didChangeDependencies
-class OrdersScreen extends StatelessWidget {
+class OrdersScreen extends StatefulWidget {
   static const routeName = '/orders';
   const OrdersScreen({super.key});
 
-  // var _isLoading = false;
+  @override
+  State<OrdersScreen> createState() => _OrdersScreenState();
+}
 
+class _OrdersScreenState extends State<OrdersScreen> {
+  late Future _oredersFuture;
+  Future _obtainOrdersFuture() {
+    return Provider.of<Orders>(context, listen: false).fetchAndSetOrders();
+    //* OTTENGO LA FUTURE UNA SOLA VOLTA!
+  }
+
+  @override
+  void initState() {
+    _oredersFuture = _obtainOrdersFuture();
+    super.initState();
+  }
+
+  // var _isLoading = false;
   Future<void> showErrorDialog(BuildContext context) async {
     await showDialog<void>(
       context: context,
@@ -34,32 +50,6 @@ class OrdersScreen extends StatelessWidget {
   }
 
   // @override
-  // void initState() {
-  //   // setState(() {
-  //   //   _isLoading = true;
-  //   // });
-  //   // //* uso THEN perché NON voglio ritornare un Future
-  //   // Future.delayed(Duration.zero).then(
-  //   //   (_) async {
-  //   //     try {
-  //   //       await Provider.of<Orders>(context, listen: false).fetchAndSetOrders();
-  //   //       setState(() {
-  //   //         _isLoading = false;
-  //   //       });
-  //   //     } catch (e) {
-  //   //       setState(() {
-  //   //         _isLoading = false;
-  //   //       });
-  //   //       print(e);
-  //   //       showErrorDialog(context);
-  //   //     }
-  //   //   },
-  //   // ); //dura 0 ma ritorna Future
-
-  //   //* commentato per usare il FutureBuilder
-  //   super.initState();
-  // }
-
   @override
   Widget build(BuildContext context) {
     // final orderData = Provider.of<Orders>(context); //! NO SE NO LOOP INFINITO
@@ -68,8 +58,10 @@ class OrdersScreen extends StatelessWidget {
         appBar: AppBar(title: const Text('Your orders')),
         drawer: const AppDrawer(),
         body: FutureBuilder(
-            future:
-                Provider.of<Orders>(context, listen: false).fetchAndSetOrders(),
+            future: _oredersFuture, //* è già il risultato del fetch!
+            //* così se rifaccio build per qualche altro pezzo dell'albero
+            //*widgets NON verrà richiamata un'altra Future
+            //* altrimenti faccio altra richiesta http ad ogni rebuild!
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 //* is loading!
