@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shopapp/env/env.dart';
 
 class Auth with ChangeNotifier {
   String? _token;
@@ -12,7 +13,7 @@ class Auth with ChangeNotifier {
     'Content-type': 'application/json',
     'Accept': 'application/json',
   };
-  final queryParams = {'key': 'AIzaSyBW0jguuVvS5W0qZe22WevusHSsux2vArA'};
+  final queryParams = {'key': Env.firebase};
   final host = Platform.isAndroid ? "10.0.2.2:9099" : "127.0.0.1:9099";
 
   Future<void> signup(String email, String password) async {
