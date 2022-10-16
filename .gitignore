@@ -45,3 +45,5 @@ app.*.map.json
 android/gradle/wrapper/gradle-7.4.1-all.zip
 exported-dev-data/firebase-export-metadata.json
 .env
+lib/env/env.g.dart
+exported-dev-data/firebase-export-metadata.json
