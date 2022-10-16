@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shopapp/providers/cart.dart';
+import 'package:shopapp/screens/auth_screen.dart';
 import 'package:shopapp/screens/cart_screen.dart';
 import 'package:shopapp/screens/edit_product_screen.dart';
 import 'package:shopapp/screens/orders_screen.dart';
@@ -52,8 +53,10 @@ class MyApp extends StatelessWidget {
             fontFamily: 'Lato',
             colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.purple)
                 .copyWith(secondary: Colors.deepOrange)),
-        home: const ProductsOverviewScreen(), //deve ascoltare Products
+        // home: const ProductsOverviewScreen(), //deve ascoltare Products
+        home: const AuthScreen(), //!PRIMA CI SI AUTENTICA
         routes: {
+          AuthScreen.routeName: (context) => const AuthScreen(),
           ProductDetailScreen.routeName: (context) =>
               const ProductDetailScreen(), //deve ascoltare Products
           CartScreen.routeName: ((context) => const CartScreen()),
