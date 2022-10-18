@@ -18,8 +18,13 @@ class Auth with ChangeNotifier {
   final host = "identitytoolkit.googleapis.com";
 
   Future<void> signup(String email, String password) async {
-    final url = Uri.https(host, "v1/accounts:signUp", queryParams);
+    return _authenticate(email, password, "signUp");
+  }
 
+  Future<void> _authenticate(
+      String email, String password, String urlSegment) async {
+    await Future.delayed(const Duration(milliseconds: 500));
+    final url = Uri.https(host, "v1/accounts:$urlSegment", queryParams);
     final response = await http.post(url,
         headers: headers,
         body: json.encode({
@@ -28,5 +33,9 @@ class Auth with ChangeNotifier {
           'returnSecureToken': true
         }));
     print(json.decode(response.body));
+  }
+
+  Future<void> login(String email, String password) async {
+    return _authenticate(email, password, "signInWithPassword");
   }
 }
