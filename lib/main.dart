@@ -56,8 +56,9 @@ class MyApp extends StatelessWidget {
             fontFamily: 'Lato',
             colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.purple)
                 .copyWith(secondary: Colors.deepOrange)),
-        // home: const ProductsOverviewScreen(), //deve ascoltare Products
+        //  home: const ProductsOverviewScreen(), //deve ascoltare Products
         home: const AuthScreen(), //!PRIMA CI SI AUTENTICA
+
         routes: {
           AuthScreen.routeName: (context) => const AuthScreen(),
           ProductsOverviewScreen.routeName: (context) =>

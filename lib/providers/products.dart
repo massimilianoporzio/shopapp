@@ -189,13 +189,19 @@ class Products with ChangeNotifier {
 
   //*leggo da API e setto la lista dei prodotti
   Future<void> fetchAndSetProducts() async {
+    Map<String, String> headers = {
+      'Content-type': 'application/json',
+      'Accept': 'application/json',
+    };
     await Future.delayed(const Duration(seconds: 1));
     final queryParams = {'ns': 'shopapp-firebase-local-default-rtdb'};
-    final host = Platform.isAndroid ? "10.0.2.2:9000" : "127.0.0.1:9000";
-    final url = Uri.http(host, "products.json", queryParams);
+    // final host = Platform.isAndroid ? "10.0.2.2:9000" : "127.0.0.1:9000";
+    const host =
+        "shopapp-firebase-local-default-rtdb.europe-west1.firebasedatabase.app";
+    final url = Uri.https(host, "products.json", queryParams);
     try {
       final List<Product> loadedProducts = [];
-      final response = await http.get(url);
+      final response = await http.get(url, headers: headers);
       final extractedData = json.decode(response.body) as Map<String,
           dynamic>; //*map with other map as values and id as keys
 
@@ -211,6 +217,7 @@ class Products with ChangeNotifier {
       _items = loadedProducts;
       notifyListeners();
     } catch (error) {
+      print(error);
       rethrow; //*lo rilancio per catturarlo nel widget!
     }
   }

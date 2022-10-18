@@ -6,5 +6,5 @@ part 'env.g.dart';
 @Envied(path: '.env')
 abstract class Env {
   @EnviedField(varName: 'FIREBASE', obfuscate: true)
-  static const firebase = _Env.firebase;
+  static final firebase = _Env.firebase;
 }
