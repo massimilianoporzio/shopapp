@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shopapp/env/env.dart';
+import 'package:shopapp/models/http_exception.dart';
 
 class Auth with ChangeNotifier {
   String? _token;
@@ -24,15 +25,26 @@ class Auth with ChangeNotifier {
   Future<void> _authenticate(
       String email, String password, String urlSegment) async {
     await Future.delayed(const Duration(milliseconds: 500));
+
     final url = Uri.https(host, "v1/accounts:$urlSegment", queryParams);
-    final response = await http.post(url,
-        headers: headers,
-        body: json.encode({
-          'email': email.trimRight(),
-          'password': password,
-          'returnSecureToken': true
-        }));
-    print(json.decode(response.body));
+
+    try {
+      final response = await http.post(url,
+          headers: headers,
+          body: json.encode({
+            'email': email.trimRight(),
+            'password': password,
+            'returnSecureToken': true
+          }));
+      // print(json.decode(response.body));
+      final responseData = json.decode(response.body);
+      if (responseData['error'] != null) {
+        throw HttpException(responseData['error']['message']);
+      }
+    } catch (error) {
+      //!firebase risponde code 200 ma dentro può esserci errore
+      rethrow;
+    }
   }
 
   Future<void> login(String email, String password) async {
