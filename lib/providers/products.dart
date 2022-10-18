@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 import 'product.dart';
 
 class Products with ChangeNotifier {
-  final uuid = Uuid();
+  final String? authToken;
 
   //my STATE for products stuff
   List<Product> _items = [
@@ -45,7 +45,10 @@ class Products with ChangeNotifier {
     //   imageUrl:
     //       'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Cast-Iron-Pan.jpg/1024px-Cast-Iron-Pan.jpg',
     // ),
-  ]; //not final the entire _items can be assigned dynamically
+  ];
+
+  Products(this.authToken,
+      this._items); //not final the entire _items can be assigned dynamically
 
   List<Product> get items {
     //*lo uso se voglio a livello globale ma di solito
@@ -69,7 +72,10 @@ class Products with ChangeNotifier {
   Future<void> editProduct(String id, Product newProduct) async {
     final prodIndex = _items.indexWhere((element) => element.id == id);
     if (prodIndex >= 0) {
-      final queryParams = {'ns': 'shopapp-firebase-local-default-rtdb'};
+      final queryParams = {
+        'ns': 'shopapp-firebase-local-default-rtdb',
+        'auth': "$authToken"
+      };
       final host = Platform.isAndroid ? "10.0.2.2:9000" : "127.0.0.1:9000";
       final url = Uri.http(host, "products/$id.json", queryParams);
       try {
@@ -94,7 +100,10 @@ class Products with ChangeNotifier {
   }
 
   Future<void> deleteProduct(String id) async {
-    final queryParams = {'ns': 'shopapp-firebase-local-default-rtdb'};
+    final queryParams = {
+      'ns': 'shopapp-firebase-local-default-rtdb',
+      'auth': "$authToken"
+    };
     final host = Platform.isAndroid ? "10.0.2.2:9000" : "127.0.0.1:9000";
     final url = Uri.http(host, "products/$id.json", queryParams);
     //*mi tengo l'indice dell'elemento che voglio cancellare
@@ -134,7 +143,10 @@ class Products with ChangeNotifier {
         price: 0,
         title: "",
         isFavorite: false);
-    final queryParams = {'ns': 'shopapp-firebase-local-default-rtdb'};
+    final queryParams = {
+      'ns': 'shopapp-firebase-local-default-rtdb',
+      'auth': "$authToken"
+    };
     final host = Platform.isAndroid ? "10.0.2.2:9000" : "127.0.0.1:9000";
     final url = Uri.http(host, "products.json", queryParams);
 
@@ -194,7 +206,10 @@ class Products with ChangeNotifier {
       'Accept': 'application/json',
     };
     await Future.delayed(const Duration(seconds: 1));
-    final queryParams = {'ns': 'shopapp-firebase-local-default-rtdb'};
+    final queryParams = {
+      'ns': 'shopapp-firebase-local-default-rtdb',
+      'auth': "$authToken"
+    };
     // final host = Platform.isAndroid ? "10.0.2.2:9000" : "127.0.0.1:9000";
     const host =
         "shopapp-firebase-local-default-rtdb.europe-west1.firebasedatabase.app";
