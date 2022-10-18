@@ -22,6 +22,19 @@ class Auth with ChangeNotifier {
     return _authenticate(email, password, "signUp");
   }
 
+  bool get isAuth {
+    return token != null;
+  }
+
+  String? get token {
+    if (_expiryDate != null &&
+        _expiryDate!.isAfter(DateTime.now()) &&
+        _token != null) {
+      return _token;
+    }
+    return null;
+  }
+
   Future<void> _authenticate(
       String email, String password, String urlSegment) async {
     await Future.delayed(const Duration(milliseconds: 500));
@@ -40,6 +53,13 @@ class Auth with ChangeNotifier {
       final responseData = json.decode(response.body);
       if (responseData['error'] != null) {
         throw HttpException(responseData['error']['message']);
+      } else {
+        //* SET THE TOKEN
+        _token = responseData['idToken'];
+        _userId = responseData['localId'];
+        _expiryDate = DateTime.now()
+            .add(Duration(seconds: int.parse(responseData['expiresIn'])));
+        notifyListeners(); //REBUILD!
       }
     } catch (error) {
       //!firebase risponde code 200 ma dentro può esserci errore

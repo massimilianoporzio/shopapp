@@ -40,37 +40,44 @@ class MyApp extends StatelessWidget {
           create: (context) => Orders(),
         )
       ],
-      child: MaterialApp(
-        scrollBehavior: const MaterialScrollBehavior().copyWith(
-          dragDevices: {
-            PointerDeviceKind.mouse,
-            PointerDeviceKind.touch,
-            PointerDeviceKind.stylus,
-            PointerDeviceKind.unknown
-          },
-        ),
-        debugShowCheckedModeBanner: false,
-        title: 'MyShop',
-        theme: ThemeData(
-            scaffoldBackgroundColor: Colors.white,
-            fontFamily: 'Lato',
-            colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.purple)
-                .copyWith(secondary: Colors.deepOrange)),
-        //  home: const ProductsOverviewScreen(), //deve ascoltare Products
-        home: const AuthScreen(), //!PRIMA CI SI AUTENTICA
+      //*rebuild only this child
+      child: Consumer<Auth>(
+          builder: (context, auth, _) => MaterialApp(
+                scrollBehavior: const MaterialScrollBehavior().copyWith(
+                  dragDevices: {
+                    PointerDeviceKind.mouse,
+                    PointerDeviceKind.touch,
+                    PointerDeviceKind.stylus,
+                    PointerDeviceKind.unknown
+                  },
+                ),
+                debugShowCheckedModeBanner: false,
+                title: 'MyShop',
+                theme: ThemeData(
+                    scaffoldBackgroundColor: Colors.white,
+                    fontFamily: 'Lato',
+                    colorScheme:
+                        ColorScheme.fromSwatch(primarySwatch: Colors.purple)
+                            .copyWith(secondary: Colors.deepOrange)),
+                //  home: const ProductsOverviewScreen(), //deve ascoltare Products
+                home: auth.isAuth
+                    ? const ProductsOverviewScreen()
+                    : const AuthScreen(), //!PRIMA CI SI AUTENTICA
 
-        routes: {
-          AuthScreen.routeName: (context) => const AuthScreen(),
-          ProductsOverviewScreen.routeName: (context) =>
-              const ProductsOverviewScreen(),
-          ProductDetailScreen.routeName: (context) =>
-              const ProductDetailScreen(), //deve ascoltare Products
-          CartScreen.routeName: ((context) => const CartScreen()),
-          OrdersScreen.routeName: ((context) => const OrdersScreen()),
-          UserProductsScreen.routeName: (context) => const UserProductsScreen(),
-          EditProductsScreen.routeName: (context) => const EditProductsScreen()
-        },
-      ),
+                routes: {
+                  AuthScreen.routeName: (context) => const AuthScreen(),
+                  ProductsOverviewScreen.routeName: (context) =>
+                      const ProductsOverviewScreen(),
+                  ProductDetailScreen.routeName: (context) =>
+                      const ProductDetailScreen(), //deve ascoltare Products
+                  CartScreen.routeName: ((context) => const CartScreen()),
+                  OrdersScreen.routeName: ((context) => const OrdersScreen()),
+                  UserProductsScreen.routeName: (context) =>
+                      const UserProductsScreen(),
+                  EditProductsScreen.routeName: (context) =>
+                      const EditProductsScreen()
+                },
+              )),
     );
   }
 }
