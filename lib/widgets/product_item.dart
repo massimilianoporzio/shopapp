@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shopapp/screens/product_detail_screen.dart';
 
+import '../providers/auth.dart';
 import '../providers/cart.dart';
 import '../providers/product.dart';
 import '../providers/products.dart';
@@ -17,6 +18,7 @@ class ProductItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final scaffoldMessenger = ScaffoldMessenger.of(context);
     final myCtx = context;
+    final authData = Provider.of<Auth>(context, listen: false);
     final cart = Provider.of<Cart>(context,
         listen: false); //*non mi interessano i cambiamenti nel cart qui
     final product = Provider.of<Product>(context,
@@ -54,8 +56,8 @@ class ProductItem extends StatelessWidget {
                     ), //need to listen a single product
                     onPressed: () async {
                       try {
-                        await product
-                            .toggleFavoriteStatus(); //!e di conseguenza rebuild!
+                        await product.toggleFavoriteStatus(
+                            authData.token); //!e di conseguenza rebuild!
                       } catch (e) {
                         scaffoldMessenger.showSnackBar(
                             SnackBar(content: Text(e.toString())));

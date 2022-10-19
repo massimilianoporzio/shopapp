@@ -36,7 +36,12 @@ class OrderItem {
 }
 
 class Orders with ChangeNotifier {
+  static const host =
+      "shopapp-firebase-local-default-rtdb.europe-west1.firebasedatabase.app";
+  final String? authToken;
   List<OrderItem> _orders = [];
+
+  Orders(this.authToken, this._orders);
 
   List<OrderItem> get orders {
     return [..._orders]; //* + una COPIA
@@ -44,9 +49,12 @@ class Orders with ChangeNotifier {
 
   Future<void> fetchAndSetOrders() async {
     await Future.delayed(const Duration(seconds: 1));
-    final queryParams = {'ns': 'shopapp-firebase-local-default-rtdb'};
-    final host = Platform.isAndroid ? "10.0.2.2:9000" : "127.0.0.1:9000";
-    final url = Uri.http(host, "orders.json", queryParams);
+    final queryParams = {
+      'ns': 'shopapp-firebase-local-default-rtdb',
+      'auth': authToken
+    };
+    // final host = Platform.isAndroid ? "10.0.2.2:9000" : "127.0.0.1:9000";
+    final url = Uri.https(host, "orders.json", queryParams);
     try {
       final List<OrderItem> loadedOrders = [];
       final response = await http.get(url);
@@ -73,9 +81,12 @@ class Orders with ChangeNotifier {
   }
 
   Future<void> addOrder(List<CartItem> cartProducts, double totalAmount) async {
-    final queryParams = {'ns': 'shopapp-firebase-local-default-rtdb'};
-    final host = Platform.isAndroid ? "10.0.2.2:9000" : "127.0.0.1:9000";
-    final url = Uri.http(host, "orders.json", queryParams);
+    final queryParams = {
+      'ns': 'shopapp-firebase-local-default-rtdb',
+      'auth': authToken
+    };
+    // final host = Platform.isAndroid ? "10.0.2.2:9000" : "127.0.0.1:9000";
+    final url = Uri.https(host, "orders.json", queryParams);
 
     final timeStamp = DateTime.now();
     final newOrder = OrderItem(

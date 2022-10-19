@@ -9,6 +9,8 @@ import 'product.dart';
 
 class Products with ChangeNotifier {
   final String? authToken;
+  static const host =
+      "shopapp-firebase-local-default-rtdb.europe-west1.firebasedatabase.app";
 
   //my STATE for products stuff
   List<Product> _items = [
@@ -73,11 +75,11 @@ class Products with ChangeNotifier {
     final prodIndex = _items.indexWhere((element) => element.id == id);
     if (prodIndex >= 0) {
       final queryParams = {
-        'ns': 'shopapp-firebase-local-default-rtdb',
+        // 'ns': 'shopapp-firebase-local-default-rtdb',
         'auth': "$authToken"
       };
-      final host = Platform.isAndroid ? "10.0.2.2:9000" : "127.0.0.1:9000";
-      final url = Uri.http(host, "products/$id.json", queryParams);
+
+      final url = Uri.https(host, "products/$id.json", queryParams);
       try {
         await http.patch(url,
             body: json.encode({
@@ -104,8 +106,8 @@ class Products with ChangeNotifier {
       'ns': 'shopapp-firebase-local-default-rtdb',
       'auth': "$authToken"
     };
-    final host = Platform.isAndroid ? "10.0.2.2:9000" : "127.0.0.1:9000";
-    final url = Uri.http(host, "products/$id.json", queryParams);
+    // final host = Platform.isAndroid ? "10.0.2.2:9000" : "127.0.0.1:9000";
+    final url = Uri.https(host, "products/$id.json", queryParams);
     //*mi tengo l'indice dell'elemento che voglio cancellare
     final existingProductIndex =
         _items.indexWhere((element) => element.id == id);
@@ -147,8 +149,8 @@ class Products with ChangeNotifier {
       'ns': 'shopapp-firebase-local-default-rtdb',
       'auth': "$authToken"
     };
-    final host = Platform.isAndroid ? "10.0.2.2:9000" : "127.0.0.1:9000";
-    final url = Uri.http(host, "products.json", queryParams);
+    // final host = Platform.isAndroid ? "10.0.2.2:9000" : "127.0.0.1:9000";
+    final url = Uri.https(host, "products.json", queryParams);
 
     //* products.json is firebase related and create if does not exisit a new collection
 
@@ -211,8 +213,7 @@ class Products with ChangeNotifier {
       'auth': "$authToken"
     };
     // final host = Platform.isAndroid ? "10.0.2.2:9000" : "127.0.0.1:9000";
-    const host =
-        "shopapp-firebase-local-default-rtdb.europe-west1.firebasedatabase.app";
+
     final url = Uri.https(host, "products.json", queryParams);
     try {
       final List<Product> loadedProducts = [];

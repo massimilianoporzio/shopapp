@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class Product with ChangeNotifier {
+  static const host =
+      "shopapp-firebase-local-default-rtdb.europe-west1.firebasedatabase.app";
+
   final String id;
   final String title;
   final String description;
@@ -42,14 +45,17 @@ class Product with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> toggleFavoriteStatus() async {
+  Future<void> toggleFavoriteStatus(String? token) async {
     //OPTIMISTIC! SALVO lo stato attuale , provo agg il backend
     //*se va male rimetto lo stato attuale
     final oldState = isFavorite;
 
-    final queryParams = {'ns': 'shopapp-firebase-local-default-rtdb'};
-    final host = Platform.isAndroid ? "10.0.2.2:9000" : "127.0.0.1:9000";
-    final url = Uri.http(host, "products/$id.json", queryParams);
+    final queryParams = {
+      'ns': 'shopapp-firebase-local-default-rtdb',
+      'auth': token
+    };
+    // final host = Platform.isAndroid ? "10.0.2.2:9000" : "127.0.0.1:9000";
+    final url = Uri.https(host, "products/$id.json", queryParams);
 
     isFavorite = !isFavorite;
     notifyListeners(); //! chi ascolta chiamerà build

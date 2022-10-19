@@ -39,8 +39,10 @@ class MyApp extends StatelessWidget {
                 Products(null, []), //*token nullo e lista di item vuota
             update: (context, auth, previousProducts) => Products(auth.token,
                 previousProducts == null ? [] : previousProducts.items)),
-        ChangeNotifierProvider(
-          create: (context) => Orders(),
+        ChangeNotifierProxyProvider<Auth, Orders>(
+          create: (context) => Orders(null, []),
+          update: (context, auth, previousOrders) => Orders(
+              auth.token, previousOrders == null ? [] : previousOrders.orders),
         )
       ],
       //*rebuild only this child
