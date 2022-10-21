@@ -212,9 +212,10 @@ class Products with ChangeNotifier {
       'Accept': 'application/json',
     };
     await Future.delayed(const Duration(seconds: 1));
-    final queryParams = {
+    var queryParams = {
       // 'ns': 'shopapp-firebase-local-default-rtdb',
-      'auth': "$authToken",
+      'access_token': '$authToken',
+      'auth': '$authToken',
       'orderBy': '"creatorId"',
       'equalTo': '"$userId"'
     };
@@ -230,6 +231,10 @@ class Products with ChangeNotifier {
         return;
       }
       //PRENDO SE PER QUELL'UTENTE IL PRODOTTO è FAVORITE
+      queryParams = {
+        // 'ns': 'shopapp-firebase-local-default-rtdb',
+        'auth': '$authToken',
+      };
       url = Uri.https(host, "userFavorites/$userId.json", queryParams);
       final favoriteResponse = await http.get(url);
       //* mi restituisce Map productId -> true or false
