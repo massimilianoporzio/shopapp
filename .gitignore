@@ -47,3 +47,5 @@ exported-dev-data/firebase-export-metadata.json
 .env
 lib/env/env.g.dart
 exported-dev-data/firebase-export-metadata.json
+lib/providers/cart.g.dart
+lib/providers/orders.g.dart
