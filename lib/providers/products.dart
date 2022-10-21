@@ -12,6 +12,8 @@ class Products with ChangeNotifier {
   static const host =
       "shopapp-firebase-local-default-rtdb.europe-west1.firebasedatabase.app";
 
+  final String? userId;
+
   //my STATE for products stuff
   List<Product> _items = [
     // Product(
@@ -49,8 +51,8 @@ class Products with ChangeNotifier {
     // ),
   ];
 
-  Products(this.authToken,
-      this._items); //not final the entire _items can be assigned dynamically
+  Products(this.authToken, this._items,
+      this.userId); //not final the entire _items can be assigned dynamically
 
   List<Product> get items {
     //*lo uso se voglio a livello globale ma di solito
@@ -165,7 +167,7 @@ class Products with ChangeNotifier {
             'description': product.description,
             'imageUrl': product.imageUrl,
             'price': product.price,
-            'isFavorite': product.isFavorite
+            // 'isFavorite': product.isFavorite NON LO PASSO PIU QUANDO CREO PRODOTTO
           }));
       //* eseguita DOPO che il server ha risposto
       //*con async hai le linee seguenti dentro una Future then
@@ -214,21 +216,32 @@ class Products with ChangeNotifier {
     };
     // final host = Platform.isAndroid ? "10.0.2.2:9000" : "127.0.0.1:9000";
 
-    final url = Uri.https(host, "products.json", queryParams);
+    var url = Uri.https(host, "products.json", queryParams);
     try {
       final List<Product> loadedProducts = [];
       final response = await http.get(url, headers: headers);
       final extractedData = json.decode(response.body) as Map<String,
           dynamic>; //*map with other map as values and id as keys
+      if (extractedData == null) {
+        return;
+      }
+      //PRENDO SE PER QUELL'UTENTE IL PRODOTTO è FAVORITE
+      url = Uri.https(host, "userFavorites/$userId.json", queryParams);
+      final favoriteResponse = await http.get(url);
+      //* mi restituisce Map productId -> true or false
+      final favoriteData = json.decode(favoriteResponse.body);
 
-      extractedData.forEach((prodId, value) {
+      extractedData.forEach((prodId, prodData) {
         loadedProducts.add(Product(
             id: prodId,
-            title: value['title'],
-            description: value['description'],
-            price: value['price'],
-            imageUrl: value['imageUrl'],
-            isFavorite: value['isFavorite']));
+            title: prodData['title'],
+            description: prodData['description'],
+            price: prodData['price'],
+            imageUrl: prodData['imageUrl'],
+            isFavorite: favoriteData == null
+                ? false
+                : favoriteData[prodId] ??
+                    false)); //se non c'è entry per prodId allora metto a false
       });
       _items = loadedProducts;
       notifyListeners();

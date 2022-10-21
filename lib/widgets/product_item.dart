@@ -56,8 +56,8 @@ class ProductItem extends StatelessWidget {
                     ), //need to listen a single product
                     onPressed: () async {
                       try {
-                        await product.toggleFavoriteStatus(
-                            authData.token); //!e di conseguenza rebuild!
+                        await product.toggleFavoriteStatus(authData.token,
+                            authData.userId); //!e di conseguenza rebuild!
                       } catch (e) {
                         scaffoldMessenger.showSnackBar(
                             SnackBar(content: Text(e.toString())));

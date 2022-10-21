@@ -45,7 +45,7 @@ class Product with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> toggleFavoriteStatus(String? token) async {
+  Future<void> toggleFavoriteStatus(String? token, String? userId) async {
     //OPTIMISTIC! SALVO lo stato attuale , provo agg il backend
     //*se va male rimetto lo stato attuale
     final oldState = isFavorite;
@@ -55,14 +55,15 @@ class Product with ChangeNotifier {
       'auth': token
     };
     // final host = Platform.isAndroid ? "10.0.2.2:9000" : "127.0.0.1:9000";
-    final url = Uri.https(host, "products/$id.json", queryParams);
-
+    // final url = Uri.https(host, "products/$id.json", queryParams);
+    final url = Uri.https(host, "userFavorites/$userId/$id.json", queryParams);
     isFavorite = !isFavorite;
     notifyListeners(); //! chi ascolta chiamerà build
     try {
-      final response = await http.patch(url,
-          body: json
-              .encode({"isFavorite": isFavorite})); //update di solo isFavorite
+      //* metto una entry con productiD  sotto useriD e che mi dice
+      //se per quel userId il productID è favorite o no
+      final response = await http.put(url,
+          body: json.encode(isFavorite)); //update di solo isFavorite
       if (response.statusCode >= 400) {
         //HTTP PACKAGE NON VA IN ERRORE PER PATCH e DELETE!!!!!REST CODE >=400
         _setFavValue(oldState); //RIPORTO AL VALORE INIZIALE

@@ -36,9 +36,11 @@ class MyApp extends StatelessWidget {
         //* provider che dipende da altro provider
         ChangeNotifierProxyProvider<Auth, Products>(
             create: (context) =>
-                Products(null, []), //*token nullo e lista di item vuota
-            update: (context, auth, previousProducts) => Products(auth.token,
-                previousProducts == null ? [] : previousProducts.items)),
+                Products(null, [], null), //*token nullo e lista di item vuota
+            update: (context, auth, previousProducts) => Products(
+                auth.token,
+                previousProducts == null ? [] : previousProducts.items,
+                auth.userId)),
         ChangeNotifierProxyProvider<Auth, Orders>(
           create: (context) => Orders(null, []),
           update: (context, auth, previousOrders) => Orders(
