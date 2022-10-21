@@ -167,6 +167,7 @@ class Products with ChangeNotifier {
             'description': product.description,
             'imageUrl': product.imageUrl,
             'price': product.price,
+            'creatorId': userId // SALVO SOLO SUL SERVER!!!! NON localmente
             // 'isFavorite': product.isFavorite NON LO PASSO PIU QUANDO CREO PRODOTTO
           }));
       //* eseguita DOPO che il server ha risposto
@@ -205,14 +206,17 @@ class Products with ChangeNotifier {
 
   //*leggo da API e setto la lista dei prodotti
   Future<void> fetchAndSetProducts() async {
+    //FILTRO SOLO I PRODOTTI DELLO USER LOGGATO! (LATO SERVER)
     Map<String, String> headers = {
       'Content-type': 'application/json',
       'Accept': 'application/json',
     };
     await Future.delayed(const Duration(seconds: 1));
     final queryParams = {
-      'ns': 'shopapp-firebase-local-default-rtdb',
-      'auth': "$authToken"
+      // 'ns': 'shopapp-firebase-local-default-rtdb',
+      'auth': "$authToken",
+      'orderBy': '"creatorId"',
+      'equalTo': '"$userId"'
     };
     // final host = Platform.isAndroid ? "10.0.2.2:9000" : "127.0.0.1:9000";
 
