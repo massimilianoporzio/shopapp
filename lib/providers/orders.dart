@@ -40,8 +40,9 @@ class Orders with ChangeNotifier {
       "shopapp-firebase-local-default-rtdb.europe-west1.firebasedatabase.app";
   final String? authToken;
   List<OrderItem> _orders = [];
+  final String? userId;
 
-  Orders(this.authToken, this._orders);
+  Orders(this.authToken, this._orders, this.userId);
 
   List<OrderItem> get orders {
     return [..._orders]; //* + una COPIA
@@ -54,7 +55,7 @@ class Orders with ChangeNotifier {
       'auth': authToken
     };
     // final host = Platform.isAndroid ? "10.0.2.2:9000" : "127.0.0.1:9000";
-    final url = Uri.https(host, "orders.json", queryParams);
+    final url = Uri.https(host, "orders/$userId.json", queryParams);
     try {
       final List<OrderItem> loadedOrders = [];
       final response = await http.get(url);
@@ -86,7 +87,7 @@ class Orders with ChangeNotifier {
       'auth': authToken
     };
     // final host = Platform.isAndroid ? "10.0.2.2:9000" : "127.0.0.1:9000";
-    final url = Uri.https(host, "orders.json", queryParams);
+    final url = Uri.https(host, "orders/$userId.json", queryParams);
 
     final timeStamp = DateTime.now();
     final newOrder = OrderItem(
