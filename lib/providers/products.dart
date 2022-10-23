@@ -205,8 +205,10 @@ class Products with ChangeNotifier {
   }
 
   //*leggo da API e setto la lista dei prodotti
-  Future<void> fetchAndSetProducts() async {
+  //*[] sono arg opzionali con default
+  Future<void> fetchAndSetProducts([bool filterByUser = false]) async {
     //FILTRO SOLO I PRODOTTI DELLO USER LOGGATO! (LATO SERVER)
+
     Map<String, String> headers = {
       'Content-type': 'application/json',
       'Accept': 'application/json',
@@ -216,9 +218,11 @@ class Products with ChangeNotifier {
       // 'ns': 'shopapp-firebase-local-default-rtdb',
       'access_token': '$authToken',
       'auth': '$authToken',
-      'orderBy': '"creatorId"',
-      'equalTo': '"$userId"'
     };
+    if (filterByUser) {
+      queryParams['orderBy'] = '"creatorId"';
+      queryParams['equalTo'] = '"$userId"';
+    }
     // final host = Platform.isAndroid ? "10.0.2.2:9000" : "127.0.0.1:9000";
 
     var url = Uri.https(host, "products.json", queryParams);

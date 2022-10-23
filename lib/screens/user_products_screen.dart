@@ -13,7 +13,8 @@ class UserProductsScreen extends StatelessWidget {
   Future<void> _refreshProducts(BuildContext context) async {
     //non setto listner just refresh products
     try {
-      await Provider.of<Products>(context, listen: false).fetchAndSetProducts();
+      await Provider.of<Products>(context, listen: false)
+          .fetchAndSetProducts(true);
     } catch (e) {
       await showDialog<void>(
         context: context,
@@ -39,8 +40,9 @@ class UserProductsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //*SETUP LISTENER FOR PRODUCTS
-    final productData = Provider.of<Products>(
-        context); //*listening: tutta la pagina rebuild se cambiano i Products
+    print('rebuilding...');
+    // final productData = Provider.of<Products>(
+    //     context); //*listening: tutta la pagina rebuild se cambiano i Products
     return Scaffold(
       appBar: AppBar(
         title: const Text('Your custom product'),
@@ -54,32 +56,43 @@ class UserProductsScreen extends StatelessWidget {
         ],
       ),
       drawer: const AppDrawer(),
-      body: RefreshIndicator(
-        color: Theme.of(context).colorScheme.secondary,
-        onRefresh: () {
-          //*has to return a Future
-          return _refreshProducts(context);
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(8),
-          child: ListView.builder(
-            itemCount: productData.items.length,
-            itemBuilder: (context, index) {
-              final product = productData.items[index];
-              return Column(
-                children: [
-                  UserProductItem(
-                      id: product.id,
-                      title: product.title,
-                      imageUrl: product.imageUrl),
-                  const Divider(
-                    color: Colors.black,
+      body: FutureBuilder(
+        future: _refreshProducts(context),
+        builder: (context, snapshot) =>
+            snapshot.connectionState == ConnectionState.waiting
+                ? Center(
+                    child: CircularProgressIndicator(
+                        color: Theme.of(context).colorScheme.secondary),
+                  )
+                : RefreshIndicator(
+                    color: Theme.of(context).colorScheme.secondary,
+                    onRefresh: () {
+                      //*has to return a Future
+                      return _refreshProducts(context);
+                    },
+                    child: Consumer<Products>(
+                      builder: (context, productsData, child) => Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: ListView.builder(
+                          itemCount: productsData.items.length,
+                          itemBuilder: (context, index) {
+                            final product = productsData.items[index];
+                            return Column(
+                              children: [
+                                UserProductItem(
+                                    id: product.id,
+                                    title: product.title,
+                                    imageUrl: product.imageUrl),
+                                const Divider(
+                                  color: Colors.black,
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                      ),
+                    ),
                   ),
-                ],
-              );
-            },
-          ),
-        ),
       ),
     );
   }
