@@ -216,12 +216,12 @@ class Products with ChangeNotifier {
     await Future.delayed(const Duration(seconds: 1));
     var queryParams = {
       // 'ns': 'shopapp-firebase-local-default-rtdb',
-      'access_token': '$authToken',
-      'auth': '$authToken',
+      'access_token': authToken,
+      'auth': authToken,
     };
     if (filterByUser) {
       queryParams['orderBy'] = '"creatorId"';
-      queryParams['equalTo'] = '"$userId"';
+      queryParams['equalTo'] = userId;
     }
     // final host = Platform.isAndroid ? "10.0.2.2:9000" : "127.0.0.1:9000";
 
@@ -231,7 +231,7 @@ class Products with ChangeNotifier {
       final response = await http.get(url, headers: headers);
       final extractedData = json.decode(response.body) as Map<String,
           dynamic>; //*map with other map as values and id as keys
-      if (extractedData == null) {
+      if (extractedData.isEmpty) {
         return;
       }
       //PRENDO SE PER QUELL'UTENTE IL PRODOTTO è FAVORITE
