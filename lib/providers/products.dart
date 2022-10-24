@@ -221,7 +221,7 @@ class Products with ChangeNotifier {
     };
     if (filterByUser) {
       queryParams['orderBy'] = '"creatorId"';
-      queryParams['equalTo'] = userId;
+      queryParams['equalTo'] = json.encode(userId);
     }
     // final host = Platform.isAndroid ? "10.0.2.2:9000" : "127.0.0.1:9000";
 
