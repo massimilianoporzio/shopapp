@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -17,6 +18,7 @@ class Auth with ChangeNotifier {
   final queryParams = {'key': Env.firebase};
   // final host = Platform.isAndroid ? "10.0.2.2:9099" : "127.0.0.1:9099";
   final host = "identitytoolkit.googleapis.com";
+  Timer? _authTimer;
 
   Future<void> signup(String email, String password) async {
     return _authenticate(email, password, "signUp");
@@ -63,6 +65,7 @@ class Auth with ChangeNotifier {
         _userId = responseData['localId'];
         _expiryDate = DateTime.now()
             .add(Duration(seconds: int.parse(responseData['expiresIn'])));
+        _autoLogout(); //*start the timer
         notifyListeners(); //REBUILD!
       }
     } catch (error) {
@@ -79,6 +82,20 @@ class Auth with ChangeNotifier {
     _token = null;
     _userId = null;
     _expiryDate = null;
+    if (_authTimer != null) {
+      //* se clicco su logout spengo e annullo il timer
+      _authTimer!.cancel();
+      _authTimer = null;
+    }
     notifyListeners();
+  }
+
+  void _autoLogout() {
+    if (_authTimer != null) {
+      //* se c'è già un time lo spengo
+      _authTimer!.cancel();
+    }
+    final timeToExpiry = _expiryDate!.difference(DateTime.now()).inSeconds;
+    _authTimer = Timer(Duration(seconds: timeToExpiry), logout);
   }
 }
