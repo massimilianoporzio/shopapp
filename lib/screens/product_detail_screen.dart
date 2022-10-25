@@ -26,9 +26,12 @@ class ProductDetailScreen extends StatelessWidget {
               padding: const EdgeInsets.only(top: 10),
               height: 0.5 * MediaQuery.of(context).size.height,
               width: double.infinity,
-              child: Image.network(
-                loadedProduct.imageUrl,
-                fit: BoxFit.contain,
+              child: Hero(
+                tag: loadedProduct.id, //* the same unique id
+                child: Image.network(
+                  loadedProduct.imageUrl,
+                  fit: BoxFit.contain,
+                ),
               ),
             ),
             const SizedBox(
@@ -42,12 +45,12 @@ class ProductDetailScreen extends StatelessWidget {
               height: 10,
             ),
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 10),
               width: double.infinity,
               child: Text(
                 loadedProduct.description,
                 // textAlign: TextAlign.justify,
-                style: TextStyle(fontSize: 24),
+                style: const TextStyle(fontSize: 24),
                 softWrap: true, //* nuova linea se descrizione lunga
               ),
             )
