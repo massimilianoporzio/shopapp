@@ -119,12 +119,15 @@ class ProductItem extends StatelessWidget {
             child: Container(
               decoration: const BoxDecoration(color: Colors.white),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Image.network(
-                  product.imageUrl,
-                  fit: BoxFit.cover,
-                ),
-              ),
+                  borderRadius: BorderRadius.circular(10),
+                  child:
+                      //*animazione:
+                      FadeInImage(
+                    placeholder: const AssetImage(
+                        'assets/images/product-placeholder.png'),
+                    image: NetworkImage(product.imageUrl),
+                    fit: BoxFit.cover,
+                  )),
             ),
           ),
         ),
