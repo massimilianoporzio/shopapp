@@ -27,7 +27,12 @@ class ProductDetailScreen extends StatelessWidget {
             expandedHeight: 300,
             pinned: true, //always visibile during scrolling
             flexibleSpace: FlexibleSpaceBar(
-              title: Text(loadedProduct.title),
+              title: Text(
+                loadedProduct.title,
+                style: const TextStyle(
+                  backgroundColor: Colors.black38,
+                ),
+              ),
               background: Hero(
                 tag: loadedProduct.id, //* the same unique id
                 child: Container(
