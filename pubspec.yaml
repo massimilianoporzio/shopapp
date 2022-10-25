@@ -44,6 +44,7 @@ dependencies:
   json_annotation: '>=4.7.0 <4.8.0'
   json_serializable: ^6.5.1
   envied: ^0.2.3
+  shared_preferences: ^2.0.15
 
 dev_dependencies:
   flutter_test:

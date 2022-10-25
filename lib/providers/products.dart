@@ -77,13 +77,14 @@ class Products with ChangeNotifier {
     final prodIndex = _items.indexWhere((element) => element.id == id);
     if (prodIndex >= 0) {
       final queryParams = {
-        // 'ns': 'shopapp-firebase-local-default-rtdb',
-        'auth': "$authToken"
+        'ns': 'shopapp-firebase-local-default-rtdb',
+        'auth': authToken,
+        'access_token': authToken,
       };
 
       final url = Uri.https(host, "products/$id.json", queryParams);
       try {
-        await http.patch(url,
+        final response = await http.put(url,
             body: json.encode({
               "title": newProduct.title,
               "description": newProduct.description,
@@ -106,7 +107,8 @@ class Products with ChangeNotifier {
   Future<void> deleteProduct(String id) async {
     final queryParams = {
       'ns': 'shopapp-firebase-local-default-rtdb',
-      'auth': "$authToken"
+      'auth': authToken,
+      'access_token': authToken,
     };
     // final host = Platform.isAndroid ? "10.0.2.2:9000" : "127.0.0.1:9000";
     final url = Uri.https(host, "products/$id.json", queryParams);
@@ -149,7 +151,8 @@ class Products with ChangeNotifier {
         isFavorite: false);
     final queryParams = {
       'ns': 'shopapp-firebase-local-default-rtdb',
-      'auth': "$authToken"
+      'auth': authToken,
+      'access_token': authToken,
     };
     // final host = Platform.isAndroid ? "10.0.2.2:9000" : "127.0.0.1:9000";
     final url = Uri.https(host, "products.json", queryParams);
@@ -237,10 +240,11 @@ class Products with ChangeNotifier {
       //PRENDO SE PER QUELL'UTENTE IL PRODOTTO è FAVORITE
       queryParams = {
         // 'ns': 'shopapp-firebase-local-default-rtdb',
-        'auth': '$authToken',
+        'auth': json.encode(authToken),
+        'access_token': json.encode(authToken),
       };
       url = Uri.https(host, "userFavorites/$userId.json", queryParams);
-      final favoriteResponse = await http.get(url);
+      final favoriteResponse = await http.get(url, headers: headers);
       //* mi restituisce Map productId -> true or false
       final favoriteData = json.decode(favoriteResponse.body);
 

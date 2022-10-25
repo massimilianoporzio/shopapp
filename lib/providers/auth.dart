@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shopapp/env/env.dart';
 import 'package:shopapp/models/http_exception.dart';
 
@@ -66,7 +67,17 @@ class Auth with ChangeNotifier {
         _expiryDate = DateTime.now()
             .add(Duration(seconds: int.parse(responseData['expiresIn'])));
         _autoLogout(); //*start the timer
+        //* STORE TOKEN
         notifyListeners(); //REBUILD!
+        final prefs =
+            await SharedPreferences.getInstance(); //return a Future so await
+        final userData = json.encode({
+          'token': _token,
+          'userId': _userId,
+          'expiryDate': _expiryDate!.toIso8601String()
+        });
+        //store user data on device (not memory!)
+        prefs.setString('userData', userData);
       }
     } catch (error) {
       //!firebase risponde code 200 ma dentro può esserci errore
@@ -78,7 +89,30 @@ class Auth with ChangeNotifier {
     return _authenticate(email, password, "signInWithPassword");
   }
 
-  void logout() {
+  Future<bool> tryAutoLogin() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('userData')) {
+      return false; //*automaticalluy wrapped in a future because of async
+    }
+    final extractedUserDataString = prefs.getString('userData');
+    if (extractedUserDataString != null) {
+      final extracedUserData =
+          json.decode(extractedUserDataString) as Map<String, dynamic>;
+      final expiryDate = DateTime.parse(extracedUserData['expiryDate']);
+      if (expiryDate.isBefore(DateTime.now())) {
+        return false; //già scaduto
+      }
+      _token = extracedUserData['token'];
+      _userId = extracedUserData['userId'];
+      _expiryDate = expiryDate;
+      notifyListeners();
+      _autoLogout(); //set again the timer
+      return true;
+    }
+    return false; //if prefs userData is NULL
+  }
+
+  void logout() async {
     _token = null;
     _userId = null;
     _expiryDate = null;
@@ -88,6 +122,10 @@ class Auth with ChangeNotifier {
       _authTimer = null;
     }
     notifyListeners();
+    //* rimuovo da prefs
+    final prefs = await SharedPreferences.getInstance();
+    // prefs.remove('userData'); // remove only userData
+    prefs.clear(); //rimouve TUTTO
   }
 
   void _autoLogout() {

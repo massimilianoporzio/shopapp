@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -10,12 +11,25 @@ import 'package:shopapp/screens/edit_product_screen.dart';
 import 'package:shopapp/screens/orders_screen.dart';
 import 'package:shopapp/screens/product_detail_screen.dart';
 import 'package:shopapp/screens/products_overview_screen.dart';
+import 'package:shopapp/screens/splash_screen.dart';
 import 'package:shopapp/screens/user_products_screen.dart';
 
 import 'providers/orders.dart';
 import 'providers/products.dart';
 
-void main() => runApp(const MyApp());
+void main() {
+  HttpOverrides.global = MyHttpOverrides();
+  runApp(const MyApp());
+}
+
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+  }
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -69,7 +83,14 @@ class MyApp extends StatelessWidget {
                 //  home: const ProductsOverviewScreen(), //deve ascoltare Products
                 home: auth.isAuth
                     ? const ProductsOverviewScreen()
-                    : const AuthScreen(), //!PRIMA CI SI AUTENTICA
+                    // check if token presente sul device
+                    : FutureBuilder(
+                        future: auth.tryAutoLogin(),
+                        builder: (context, snapshot) =>
+                            snapshot.connectionState == ConnectionState.waiting
+                                ? SplashScreen()
+                                : const AuthScreen(),
+                      ),
 
                 routes: {
                   AuthScreen.routeName: (context) => const AuthScreen(),
