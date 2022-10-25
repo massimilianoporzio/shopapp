@@ -33,8 +33,14 @@ class ProductItem extends StatelessWidget {
             borderRadius: BorderRadius.circular(10)),
         child: GestureDetector(
           onTap: () {
-            Navigator.of(context).pushNamed(ProductDetailScreen.routeName,
-                arguments: product.id); //e passo argomenti
+            Navigator.of(context).push(PageRouteBuilder(
+                transitionDuration: const Duration(milliseconds: 500),
+                pageBuilder: (context, animation, secondaryAnimation) {
+                  return const ProductDetailScreen();
+                },
+                settings: RouteSettings(arguments: product.id)));
+            // Navigator.of(context).pushNamed(ProductDetailScreen.routeName,
+            //     arguments: product.id); //e passo argomenti
           },
           child: GridTile(
             footer: ClipRRect(
@@ -121,12 +127,15 @@ class ProductItem extends StatelessWidget {
               child: ClipRRect(
                   borderRadius: BorderRadius.circular(10),
                   child:
-                      //*animazione:
-                      FadeInImage(
-                    placeholder: const AssetImage(
-                        'assets/images/product-placeholder.png'),
-                    image: NetworkImage(product.imageUrl),
-                    fit: BoxFit.cover,
+                      //*animazione: e tra screen
+                      Hero(
+                    tag: product.id, //* unique tag per image
+                    child: FadeInImage(
+                      placeholder: const AssetImage(
+                          'assets/images/product-placeholder.png'),
+                      image: NetworkImage(product.imageUrl),
+                      fit: BoxFit.cover,
+                    ),
                   )),
             ),
           ),
