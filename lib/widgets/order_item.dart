@@ -22,27 +22,35 @@ class _OrderItemState extends State<OrderItem> {
   @override
   Widget build(BuildContext context) {
     final formatCurrency = NumberFormat.simpleCurrency();
-    return Card(
-      margin: const EdgeInsets.all(10),
-      child: Column(children: [
-        ListTile(
-          title: Text(formatCurrency.format(widget.order.amount)),
-          subtitle: Text(
-              DateFormat('dd/MM/yyyy hh:mm').format(widget.order.orderDate)),
-          trailing: IconButton(
-            icon: Icon(_expanded ? Icons.expand_less : Icons.expand_more),
-            onPressed: () {
-              setState(() {
-                _expanded = !_expanded; //TOGGLE
-              });
-            },
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 500),
+      height: _expanded
+          ? min(widget.order.products.length * 50.0 + 180,
+              0.9 * MediaQuery.of(context).size.height + 100)
+          : 95,
+      child: Card(
+        margin: const EdgeInsets.all(10),
+        child: Column(children: [
+          ListTile(
+            title: Text(formatCurrency.format(widget.order.amount)),
+            subtitle: Text(
+                DateFormat('dd/MM/yyyy hh:mm').format(widget.order.orderDate)),
+            trailing: IconButton(
+              icon: Icon(_expanded ? Icons.expand_less : Icons.expand_more),
+              onPressed: () {
+                setState(() {
+                  _expanded = !_expanded; //TOGGLE
+                });
+              },
+            ),
           ),
-        ),
-        if (_expanded)
-          Container(
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 500),
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            height: min(widget.order.products.length * 50.0 + 80,
-                0.9 * MediaQuery.of(context).size.height),
+            height: _expanded
+                ? min(widget.order.products.length * 50.0 + 80,
+                    0.9 * MediaQuery.of(context).size.height)
+                : 0, //* zero se non è espanso non DEVO vederlo
             child: ListView.builder(
               itemCount: widget.order.products.length,
               itemBuilder: (context, index) {
@@ -84,7 +92,8 @@ class _OrderItemState extends State<OrderItem> {
               },
             ),
           )
-      ]),
+        ]),
+      ),
     );
   }
 }
