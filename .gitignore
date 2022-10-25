@@ -49,3 +49,4 @@ lib/env/env.g.dart
 exported-dev-data/firebase-export-metadata.json
 lib/providers/cart.g.dart
 lib/providers/orders.g.dart
+android/gradle/wrapper/gradle-wrapper.properties
