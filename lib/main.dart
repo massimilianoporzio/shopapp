@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shopapp/helpers/custom_route.dart';
 import 'package:shopapp/providers/auth.dart';
 import 'package:shopapp/providers/cart.dart';
 import 'package:shopapp/screens/auth_screen.dart';
@@ -77,6 +78,11 @@ class MyApp extends StatelessWidget {
                 theme: ThemeData(
                     scaffoldBackgroundColor: Colors.white,
                     fontFamily: 'Lato',
+                    pageTransitionsTheme: PageTransitionsTheme(builders: {
+                      //*posso mettere effetti diversi per ogni piattaforma
+                      TargetPlatform.android: CustomPageTransitionBuilder(),
+                      TargetPlatform.iOS: CustomPageTransitionBuilder(),
+                    }),
                     colorScheme:
                         ColorScheme.fromSwatch(primarySwatch: Colors.purple)
                             .copyWith(secondary: Colors.deepOrange)),
